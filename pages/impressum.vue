@@ -18,7 +18,7 @@ const page = data.value.data[0]
     <Title>{{ w.page_imprint }}</Title>
   </Head>
   <div class="page" v-if="data">
-    <h1 class="text-center">{{ useGetTranslatedContent('title', locale, page) }}</h1>
+    <h1 class="text-center page-header">{{ useGetTranslatedContent('title', locale, page) }}</h1>
     <!-- <div class="page-content" v-html="pageContent"/> -->
     <div class="page-content" v-html="useGetTranslatedContent('page_content', locale, page)"/>
   </div>

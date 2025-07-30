@@ -23,7 +23,7 @@ function filterListableImages(images) {
   </Head>
   <div class="page image-listing-page" v-if="data">
     <section class="cms-page">
-      <h1 class="text-center">{{ useGetTranslatedContent('title', locale, page) }}</h1>
+      <h1 class="text-center page-header">{{ useGetTranslatedContent('title', locale, page) }}</h1>
       <div class="page-content" v-html="useGetTranslatedContent('page_content', locale, page)" />
     </section>
     <section class="listing">

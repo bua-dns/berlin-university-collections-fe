@@ -13,7 +13,7 @@ const counter = useState('counter', () => {
 
   <div class="page image-listing-page" v-if="true">
     <section class="cms-page">
-      <h1 class="text-center">workbench</h1>
+      <h1 class="text-center page-header">workbench</h1>
       <div>
         List 1: {{ counter.list1 }}
       </div>

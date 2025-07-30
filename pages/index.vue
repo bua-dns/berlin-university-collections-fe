@@ -96,7 +96,7 @@ const newscardstrans = computed(() => {
     <section class="page-segment">
       <!-- <pre>{{ newscardstrans }}</pre> -->
       <!-- <pre>{{ newscards }}</pre> -->
-      <h2 class="text-center">{{ w.news }}</h2>
+      <h2 class="text-center section-heading-lg">{{ w.news }}</h2>
       <div class="cards mt-3">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
           <div v-for="(card, index) in newscardstrans" :key="`card-${index}`" class="col">

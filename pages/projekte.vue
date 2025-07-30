@@ -47,7 +47,7 @@ const categorizedProjects = computed(() => {
     <Title>{{ w.page_projekte }}</Title>
   </Head>
   <div class="page p_dns-page" v-if="data && page.status === 'published'">
-    <h1 class="mb-4 text-center">{{ useGetTranslatedContent('title', locale, page) }}</h1>
+    <h1 class="text-center page-header">{{ useGetTranslatedContent('title', locale, page) }}</h1>
     <template v-if="!page.display_sidebar">
       <div class="page-content" v-html="useGetTranslatedContent('page_content', locale, page)" />
     </template>
