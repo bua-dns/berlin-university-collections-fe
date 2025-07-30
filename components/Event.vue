@@ -1,7 +1,8 @@
 <script setup>
 defineProps(['event']);
 const theme = useState("theme")
-const w = theme.value.data.wording.de
+const { locale } = useI18n();
+const w = computed(() => theme.value.data.wording[locale.value]);
 
 function formatDate(date) {
   return new Date(`${date}T12:00:00`).toLocaleDateString('de-DE', {
@@ -34,17 +35,17 @@ function getTimeFormat(time) {
         Uhr
       </div>
     </div>
-    <h3>{{ event.title }}</h3>
-    <h4>{{ event.subtitle }}</h4>
-    <div class="location">
+    <h3>{{ useGetTranslatedContent('title', locale, event) }}</h3>
+    <h4>{{ useGetTranslatedContent('subtitle', locale, event) }}</h4>
+    <div class="location" v-if="useGetTranslatedContent('venue', locale, event)">
       <svg class="icon" width="16" height="16" fill="currentColor">
         <use xlink:href="@/assets/img/bootstrap-icons.svg#geo-alt"></use>
       </svg>
-      <div class="location-info" v-html="event.venue" />
+      <div class="location-info" v-html="useGetTranslatedContent('venue', locale, event)" />
     </div>
   </div>
   <div class="event-body">
-    <div class="description" v-html="event.description" />
+    <div class="description" v-html="useGetTranslatedContent('description', locale, event)" />
     <div class="event-type">{{ w[event.event_type] }}</div>
     <div class="registration-info">{{ w[event.registration] }}</div>
   </div>
@@ -62,11 +63,14 @@ function getTimeFormat(time) {
             font-size: 1.0rem;
             margin-bottom: .5rem;
           }
-    
+          h3, h4 {
+            padding-left: 1.5rem;
+          }
           h3 {
             font-size: 1.25rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
+            
           }
     
           h4 {
