@@ -12,7 +12,7 @@ const { data: backgroundImages } = await useFetch(`${projectConfig.dataBaseUrl}/
   });
 const { data: taxonomyTermsData } = await useFetch(`${projectConfig.dataBaseUrl}/taxonomy_terms`, {
   query: {
-    fields: 'id, label, spws_taxonomy',
+    fields: 'id, label, spws_taxonomy, translations.*',
     limit: -1,
     meta: 'total_count',
   }
