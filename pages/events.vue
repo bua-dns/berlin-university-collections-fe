@@ -74,7 +74,8 @@ function getTimeFormat(time) {
         <Event :event="event" />
       </div>
     </div>
-    <h3>{{ w.past_events }}</h3>
+    <h1 class="past-events-heading">{{ w.past_events }}</h1>
+    <hr />
     <div v-if="pastEvents && pastEvents.length" class="events-listing mt-5">
       <div v-for="event in pastEvents" :key="event.id" class="event-entry">
         <Event :event="event" />
@@ -86,6 +87,11 @@ function getTimeFormat(time) {
 
 <style lang='scss'>
 .p_dns-page {
+  .past-events-heading {
+    margin-top: 7.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
   .page-container {
     display: block;
 
