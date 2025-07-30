@@ -1,7 +1,14 @@
 <script setup>
 /* Used auto-imported composables: projectConfig */
 const { data: themeContent } = await useFetch(`${projectConfig.dataBaseUrl}/theme_content`);
-const { data: personsTeamContent } = await useFetch(`${projectConfig.dataBaseUrl}/persons_team`);
+const { data: personsTeamContent } = await useFetch(`${projectConfig.dataBaseUrl}/persons_team`,
+  {
+    query: {
+      fields: '*,translations.*',
+      limit: -1,
+    }
+  }
+);
 const { data: institutionsContent } = await useFetch(`${projectConfig.dataBaseUrl}/institutions`);
 const { data: backgroundImages } = await useFetch(`${projectConfig.dataBaseUrl}/background_images`,
   {

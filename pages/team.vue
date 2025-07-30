@@ -11,7 +11,7 @@ const w = computed(() => theme.value.data.wording[locale.value]);
 const slug = 'team'
 const titleWording = 'page_team'
 
-// const { data } = await useFetchPage(slug)
+// useGetTranslatedContent('page_content', locale, page)
 // const page = data.value.data[0]
 </script>
 
@@ -26,8 +26,8 @@ const titleWording = 'page_team'
       v-for="(person, index) in members"
       :key="`person-${index}`"
     >
-      <h3 class="mb-1">{{ useGetTranslatedContent('name', locale, person) }}</h3>
-      <h4 class="mb-2 sans-serif">{{ person.position }}</h4>
+      <h3 class="mb-1">{{ person.name }}</h3>
+      <h4 class="mb-2 sans-serif">{{ useGetTranslatedContent('position', locale, person) }}</h4>
       <div class="short-presentation" v-html="useGetTranslatedContent('short_presentation', locale, person)"/>
       <a 
         :href="`mailto:${person.mail_contact}`" 
