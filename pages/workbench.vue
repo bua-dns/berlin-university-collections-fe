@@ -1,88 +1,55 @@
 <script setup>
+const { locale } = useI18n();
+const theme = useState('theme');
+const w = computed(() => theme.value.data.wording[locale.value]);
 
-const counter = useState('counter', () => {
-  return {
-    list1: ['term1'],
-    list2: ['term1']
-  }
-})
+const mineralsData = useState('minerals');
+const mstubItemsData = useState('mstubItems');
+
+
+const minerals = mineralsData.value.data || [];
+const mstubItems = mstubItemsData.value.data || [];
+const sample = mstubItems
+  .filter(item => item.representations && item.representations.length > 0)
+  .slice(0, 50) || [];
 
 </script>
 
 <template>
-
-  <div class="page image-listing-page" v-if="true">
-    <section class="cms-page">
-      <h1 class="text-center">workbench</h1>
-      <div>
-        List 1: {{ counter.list1 }}
-      </div>
-      <div>
-        List 2: {{ counter.list2 }}
-      </div>
-      <TestComponent store="counter"/>
-
-      <div class="dev-outs" v-if="false">
-        counter: <br>
-        {{ counter }}
-      </div>
-      <!-- <DEVDisplayUseStore /> -->
-    </section>
+  <Head>
+    <Title>Workbench</Title>
+  </Head>
+  <div class="page full-width" v-if="true">
+    <h1 class="text-center">Workbench</h1>
+    <div class="page-content" >
+      <CardCollectionItems>
+        <template #image>
+          <img src="@/assets\img\image-placeholder.svg" alt="Sample Image">
+        </template>
+        <template #title>Sample Title</template>
+        <template #meta>Sample Meta Information</template>
+        <template #footer>Sample Footer Content</template>
+      </CardCollectionItems>  
+        <template #image>
+          <img src="https://picsum.photos/200/300" alt="Sample Image">
+        </template>
+        <template #title>Sample Title</template>
+        <template #meta>Sample Meta Information</template>
+        <template #footer>Sample Footer Content</template>
+    </div>
+    <div class="dev-output">
+      <h3>Development Output</h3>
+      <pre v-if="true">{{ minerals.length }}</pre>
+      <pre v-if="true">{{ mstubItems.length }}</pre>
+      <pre v-if="true">{{ sample }}</pre>
+    </div>
   </div>
 </template>
 
-<style lang='scss'>
-button {
-  display: block;
-  margin: 1rem
+<style scoped lang='scss'>
+.workbench {
+
 }
-.image-listing-page {
-  .listing {
-    .entry {
-      scroll-margin-top: 88px;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
 
-      @media screen and (min-width: 768px) {
-        flex-direction: row;
-        gap: 2.5rem;
-      }
-
-      .image-part {
-        flex: 1;
-
-        img {
-          width: 100%;
-          height: auto;
-        }
-
-        .credits {
-          font-size: var(--font-size-text-extra-small);
-        }
-      }
-
-      .text-part {
-        flex: 1;
-        font-size: var(--font-size-text-small);
-
-        .description {
-          font-size: var(--font-size-text-small);
-
-          p {
-            margin: 0;
-          }
-        }
-
-        .link {
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-start;
-          gap: 0.5rem;
-        }
-      }
-    }
-  }
-}
 </style>
 

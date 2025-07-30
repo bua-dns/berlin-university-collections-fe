@@ -529,6 +529,10 @@ main {
   &.wide {
     max-width: var(--page-width-wide);
   }
+  &.full-width {
+    max-width: 100%;
+    padding: var(--page-padding);
+  }
 }
 
 .page {
