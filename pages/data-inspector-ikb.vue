@@ -1,7 +1,8 @@
 <script setup>
 const theme = useState("theme");
 const ikbConfiguration = useState('ikbConfiguration');
-const w = theme.value.data.wording.de
+const { locale } = useI18n();
+const w = computed(() => theme.value.data.wording[locale.value]);
 
 const slug = 'data-inspector-lehrbildsammlung-ikb'
 
@@ -126,7 +127,7 @@ const markAllLimit = 100;
       <h1 class="page-header text-center">{{ w.page_data_inspector_ikb}}<span class="badge-beta">beta</span></h1>
     </div>
 
-    <div class="intro" v-html="page.page_content" />
+    <div class="intro" v-html="useGetTranslatedContent('page_content', locale, page)" />
     <div class="controls">
       <h3>Suche nach Objekten, die auf den Lehrbildern dargestellt sind</h3>
       <div class="priority-selection">
