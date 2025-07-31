@@ -3,6 +3,10 @@ const { locale } = useI18n();
 const theme = useState('theme');
 const w = computed(() => theme.value.data.wording[locale.value]);
 
+import { useMineralStore } from '@/stores/useMineralStore'
+const mineralStore = useMineralStore()
+const currentMineral = computed(() => mineralStore.currentMineral)
+
 const mineralsData = useState('minerals');
 const mstubItemsData = useState('mstubItems');
 
@@ -13,13 +17,13 @@ const sample = mstubItems
   .filter(item => item.representations && item.representations.length > 0)
   .slice(0, 50) || [];
 
-const currentMineral = ref('Cuprit');
+// const currentMineral = ref(null);
 
 const filteredMstubItems = computed(() => {
   if (!currentMineral.value) return [];
   
   return mstubItems
-    .filter(item => item.mineral_denomination_inventory === currentMineral.value)
+    .filter(item => item.mineral_denominations_relations.includes(currentMineral.value))
     .sort((a, b) => {
       const hasA = a.representations.length > 0;
       const hasB = b.representations.length > 0;
@@ -42,8 +46,17 @@ const filteredMstubItems = computed(() => {
 
   <div class="page image-listing-page workbench full-width" v-if="true">
     <section class="cms-page">
-      <h1 class="text-center page-header">workbench</h1>
+      <h1 class="text-center page-header">Workbench</h1>
+      <pre v-if="true">{{ currentMineral }}</pre>
       <pre v-if="true">{{ filteredMstubItems.length }}</pre>
+      <div class="controls">
+        <SearchBoxTerms
+          :terms="minerals"
+          labelKey="label"
+          filterKey="slug"
+          @selected="currentMineral = $event.slug"
+        />
+      </div>
       <div class="collection-items">
         <CardCollectionItems v-for="item in filteredMstubItems" :key="item.id">
           <template #image v-if="item.representations && item.representations.length > 0">
