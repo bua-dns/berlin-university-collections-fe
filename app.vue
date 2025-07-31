@@ -1,18 +1,25 @@
 <script setup>
 /* Used auto-imported composables: projectConfig */
 const { data: themeContent } = await useFetch(`${projectConfig.dataBaseUrl}/theme_content`);
-const { data: personsTeamContent } = await useFetch(`${projectConfig.dataBaseUrl}/persons_team`);
+const { data: personsTeamContent } = await useFetch(`${projectConfig.dataBaseUrl}/persons_team`,
+  {
+    query: {
+      fields: '*,translations.*',
+      limit: -1,
+    }
+  }
+);
 const { data: institutionsContent } = await useFetch(`${projectConfig.dataBaseUrl}/institutions`);
 const { data: backgroundImages } = await useFetch(`${projectConfig.dataBaseUrl}/background_images`,
   {
     query: {
-      fields: '*,object_from_collection.id,object_from_collection.label,object_from_collection.current_keeper',
+      fields: '*,object_from_collection.id,object_from_collection.label,object_from_collection.current_keeper, translations.*',
       limit: -1
     }
   });
 const { data: taxonomyTermsData } = await useFetch(`${projectConfig.dataBaseUrl}/taxonomy_terms`, {
   query: {
-    fields: 'id, label, spws_taxonomy',
+    fields: 'id, label, spws_taxonomy, translations.*',
     limit: -1,
     meta: 'total_count',
   }

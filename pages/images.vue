@@ -23,7 +23,7 @@ function filterListableImages(images) {
   </Head>
   <div class="page image-listing-page" v-if="data">
     <section class="cms-page">
-      <h1 class="text-center">{{ useGetTranslatedContent('title', locale, page) }}</h1>
+      <h1 class="text-center page-header">{{ useGetTranslatedContent('title', locale, page) }}</h1>
       <div class="page-content" v-html="useGetTranslatedContent('page_content', locale, page)" />
     </section>
     <section class="listing">
@@ -37,7 +37,7 @@ function filterListableImages(images) {
         <div class="text-part">
           <div v-if="image.description" class="mb-4 description" v-html="useGetTranslatedContent('description', locale, image)" />
           <div class="link" v-if="image.object_from_collection">
-            <span>Eine Aufnahme aus:</span>
+            <span>{{ w.image_from_collection }}</span>
             <NuxtLink :to="`/sammlungen?acid=${image.object_from_collection.id}`">
               {{ image.object_from_collection.label }}
             </NuxtLink>

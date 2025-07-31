@@ -16,33 +16,24 @@ const sample = mstubItems
 </script>
 
 <template>
-  <Head>
-    <Title>Workbench</Title>
-  </Head>
-  <div class="page full-width" v-if="true">
-    <h1 class="text-center">Workbench</h1>
-    <div class="page-content" >
-      <CardCollectionItems>
-        <template #image>
-          <img src="@/assets\img\image-placeholder.svg" alt="Sample Image">
-        </template>
-        <template #title>Sample Title</template>
-        <template #meta>Sample Meta Information</template>
-        <template #footer>Sample Footer Content</template>
-      </CardCollectionItems>  
-        <template #image>
-          <img src="https://picsum.photos/200/300" alt="Sample Image">
-        </template>
-        <template #title>Sample Title</template>
-        <template #meta>Sample Meta Information</template>
-        <template #footer>Sample Footer Content</template>
-    </div>
-    <div class="dev-output">
-      <h3>Development Output</h3>
-      <pre v-if="true">{{ minerals.length }}</pre>
-      <pre v-if="true">{{ mstubItems.length }}</pre>
-      <pre v-if="true">{{ sample }}</pre>
-    </div>
+
+  <div class="page image-listing-page" v-if="true">
+    <section class="cms-page">
+      <h1 class="text-center page-header">workbench</h1>
+      <div>
+        List 1: {{ counter.list1 }}
+      </div>
+      <div>
+        List 2: {{ counter.list2 }}
+      </div>
+      <TestComponent store="counter"/>
+
+      <div class="dev-outs" v-if="false">
+        counter: <br>
+        {{ counter }}
+      </div>
+      <!-- <DEVDisplayUseStore /> -->
+    </section>
   </div>
 </template>
 

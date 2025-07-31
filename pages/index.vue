@@ -36,12 +36,13 @@ const featuredCards = homepage.value.data.cardset_featured
 const subjects = computed(() => {
   return taxonomyTerms.value.data
     .filter((term) => term.spws_taxonomy === 'subject')
-    .sort((a, b) => a.label.localeCompare(b.label));
+    // .sort((a, b) => a.label.localeCompare(b.label));
 });
 const objectTypes = computed(() => {
   return taxonomyTerms.value.data
     .filter((term) => term.spws_taxonomy === 'genre')
-    .sort((a, b) => a.label.localeCompare(b.label));
+    // .sort((a, b) => a.label.localeCompare(b.label));
+
 });
 
 const { data: newscards } = await useFetch(`${projectConfig.dataBaseUrl}/news_cards`, {
@@ -95,7 +96,7 @@ const newscardstrans = computed(() => {
     <section class="page-segment">
       <!-- <pre>{{ newscardstrans }}</pre> -->
       <!-- <pre>{{ newscards }}</pre> -->
-      <h2 class="text-center">{{ w.news }}</h2>
+      <h2 class="text-center section-heading-lg">{{ w.news }}</h2>
       <div class="cards mt-3">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
           <div v-for="(card, index) in newscardstrans" :key="`card-${index}`" class="col">
@@ -121,7 +122,7 @@ const newscardstrans = computed(() => {
           :class="'card dns-card university-card ' + card.navigation_cards_id.label"
           :style="'border-color:' + card.navigation_cards_id.background_color + ';'">
           <NuxtLink :to="card.navigation_cards_id.more_button_link" class="card-link large light">
-            {{ card.navigation_cards_id.title }}
+            {{ useGetTranslatedContent('title', locale, card.navigation_cards_id) }}
           </NuxtLink>
         </div>
       </div>
@@ -130,12 +131,13 @@ const newscardstrans = computed(() => {
     <section class="mt-lg-4 row taxonomy-cards page-segment">
       <div class="select-cards-section subjects col-lg mt-4 mt-lg-0">
         <div class="mb-3 intro" v-html="useGetTranslatedContent('subject_selection_intro', locale, page)" />
+        <pre v-if="false">{{ taxonomyTerms }}</pre>
         <div class="subject-grid">
           <div v-for="(subject, idx) in subjects" :key="idx" class="card dns-card selection-card">
             <NuxtLink :to="'/sammlungen?dns_taxonomy_subjects=' + getLabelUrl(subject.label)"
               class="card-link medium"
             >
-              {{ subject.label }}
+              {{ useGetTranslatedContent('label', locale, subject) }}
             </NuxtLink>
           </div>
         </div>
@@ -147,7 +149,7 @@ const newscardstrans = computed(() => {
             <NuxtLink :to="'/sammlungen?dns_taxonomy_genre=' +
               getLabelUrl(type.label)" class="card-link medium"
             >
-              {{ type.label }}
+              {{ useGetTranslatedContent('label', locale, type) }}
             </NuxtLink>
           </div>
         </div>
@@ -159,9 +161,14 @@ const newscardstrans = computed(() => {
       <div class="intro" v-if="homepage.data.cardset_featured_intro" v-html="useGetTranslatedContent('cardset_featured_intro', locale, page)" />
       <div class="features-grid">
         <div v-for="(card, index) in featuredCards" :key="`card-${index}`" class="feature-card">
-          <!-- <pre>{{ card }}</pre> -->
-          <Card :cardImage="card.card_image.filename_disk" :cardTitle="card.title" :cardText="card.card_text"
-            :cardMoreButtonLabel="card.more_button_label" :cardMoreButtonLink="card.more_button_link"
+          <!-- <pre>{{ card }}</pre> 
+           {{ useGetTranslatedContent('title', locale, card.navigation_cards_id) }}-->
+          <Card 
+            :cardImage="card.card_image.filename_disk" 
+            :cardTitle="useGetTranslatedContent('title', locale, card)" 
+            :cardText="useGetTranslatedContent('card_text', locale, card)"
+            :cardMoreButtonLabel="useGetTranslatedContent('more_button_label', locale, card)" 
+            :cardMoreButtonLink="card.more_button_link"
             cardBodyMinHeight="13rem" />
         </div>
       </div>
