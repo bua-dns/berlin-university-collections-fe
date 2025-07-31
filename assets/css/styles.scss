@@ -158,6 +158,7 @@ $blue: #414a5d;
   --page-segment-padding: 2rem 2rem;
   --page-width: 74rem;
   --page-width-wide: 80rem;
+  --page-width-full: 100%;
 
   --main-margin-top: calc(var(--header-height) + 1rem);
   --main-margin-bottom: 4rem;
@@ -546,6 +547,10 @@ main {
     background-color: transparent;
     border-radius: 0;
     padding: 0;
+  }
+  &.full-width {
+    max-width: var(--page-width-full);
+    padding: 2rem;
   }
 }
 
