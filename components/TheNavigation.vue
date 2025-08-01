@@ -102,9 +102,17 @@ const tabIndex = computed(() => {
       <h4 class="nav-sub-title text-center">{{ w.lab }}</h4>
       <ul>
         <li>
+          <NuxtLinkLocale :tabIndex="tabIndex" @click="navState = 'close'" to="/mineraliensammlungen-tu">
+            Mineralogische Sammlungen TU (Demonstrator)</NuxtLinkLocale>
+        </li>
+        <li>
           <NuxtLinkLocale :tabIndex="tabIndex" @click="navState = 'close'" to="/data-inspector-ikb">
             {{ w.page_data_inspector_ikb }} </NuxtLinkLocale>
-        </li>
+          </li>
+          <li>
+            <NuxtLinkLocale :tabIndex="tabIndex" @click="navState = 'close'" to="/projects/data-management-lab">
+              Data Management Lab</NuxtLinkLocale>
+          </li>
       </ul>
     </div>
   </nav>
