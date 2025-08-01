@@ -94,8 +94,6 @@ const newscardstrans = computed(() => {
       </div>
     </section>
     <section class="page-segment">
-      <!-- <pre>{{ newscardstrans }}</pre> -->
-      <!-- <pre>{{ newscards }}</pre> -->
       <h2 class="text-center section-heading-lg">{{ w.news }}</h2>
       <div class="cards mt-3">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">

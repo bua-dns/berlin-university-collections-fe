@@ -57,7 +57,7 @@ const { data: mstubMineralsData } = await useFetch(`https://mstub-db.bua-dns.de/
 });
 const { data: mstubItemsData } = await useFetch(`https://mstub-db.bua-dns.de/items/collection_items`, {
   query: {
-    fields: '*.*',
+    fields: '*.*, card_entries.card_entries_id.*',
     limit: -1,
   }
 });

@@ -1,5 +1,6 @@
 <script setup>
-import { useMineralStore } from "@/stores/useMineralStore"
+const route = useRoute();
+const router = useRouter();
 const theme = useState("theme")
 const { locale } = useI18n()
 const w = computed(() => theme.value.data.wording[locale.value])
@@ -52,13 +53,17 @@ function setSamples() {
   // Return first 10
   return shuffled.slice(0, 10)
 }
+function navigateTo(path) {
+  router.push(path)
+}
+
 onMounted(() => {
   samples.value = setSamples()
 })
 </script>
 
 <template>
-  <div >
+  <div>
     <section class="page image-listing-page workbench">
       <h1 class="text-center page-header">{{ useGetTranslatedContent("title", locale, page) }}</h1>
       <div class="page-content" v-html="useGetTranslatedContent('page_content', locale, page)" />
@@ -69,17 +74,14 @@ onMounted(() => {
       <pre v-if="false">{{ currentMineral }}</pre>
       <pre v-if="false">{{ filteredMstubItems.length }}</pre>
       <div class="controls">
-        <SearchBoxTerms 
-          :terms="minerals" 
-          labelKey="label" 
-          filterKey="slug"
-          placeholder="Mineral suchen"
+        <SearchBoxTerms :terms="minerals" labelKey="label" filterKey="slug" placeholder="Mineral suchen"
           @selected="currentMineral = $event.slug" />
       </div>
-      <section class="demonstrator page image-listing-page workbench full-width" v-if="filteredMstubItems.length === 0 && samples.length > 0">
+      <section class="demonstrator page image-listing-page workbench full-width"
+        v-if="filteredMstubItems.length === 0 && samples.length > 0">
 
-        <h2 class="my-5 text-center">{{ w['sample_collection_items']}}</h2>
-        <div class="collection-items" >
+        <h2 class="my-5 text-center">{{ w['sample_collection_items'] }}</h2>
+        <div class="collection-items">
           <CardCollectionItems v-for="item in samples" :key="item.id">
             <template #image v-if="item.representations && item.representations.length > 0">
               <img :src="useGetMSTUBImageUrl(item.representations[0].directus_files_id)" alt="Item Image" />
@@ -99,7 +101,8 @@ onMounted(() => {
               </div>
             </template>
             <template #footer>
-              <button class="btn btn-primary">Mehr zu diesem Objekt</button>
+              <NuxtLinkLocale :to="`/mstub/${item.slug}`" class="btn btn-primary">mehr zu diesem Objekt
+              </NuxtLinkLocale>
             </template>
           </CardCollectionItems>
         </div>
@@ -124,7 +127,8 @@ onMounted(() => {
             </div>
           </template>
           <template #footer>
-            <button class="btn btn-primary">Mehr zu diesem Objekt</button>
+            <NuxtLinkLocale :to="`/mstub/${item.slug}`" class="btn btn-primary">mehr zu diesem Objekt
+            </NuxtLinkLocale>
           </template>
         </CardCollectionItems>
       </div>
@@ -140,6 +144,7 @@ onMounted(() => {
     max-width: var(--page-width);
     margin: 1rem auto 2rem;
   }
+
   .collection-items {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -162,6 +167,7 @@ onMounted(() => {
     margin-top: 10px;
   }
 }
+
 .image-placeholder {
   width: 6rem;
   display: block;

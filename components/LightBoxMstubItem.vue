@@ -26,21 +26,12 @@ onUnmounted(() => {
   window.removeEventListener('keydown', closeLightbox);
 });
 
-// construct image url from dynamic and static, project-specific parts
-// size: 'preview' or 'full' for lightbox
-function composeImageUrl(size) {
-  let url = '';
-  if (size === 'preview') url = `https://mstub-db.bua-dns.de/assets/${props.image}`;
-  if (size === 'full') url = `https://mstub-db.bua-dns.de/assets/${props.image}`;
-  return url;
-}
-
 </script>
 
 <template>
   <div class="ikb-image-viewer">
     <div class="preview-single">
-      <img @click="openLightbox()" :src="composeImageUrl('preview')" alt="">
+      <img @click="openLightbox()" :src="image" alt="">
     </div>
     <Teleport to="body">
       <div v-if="showLightbox" class="lightbox">
@@ -50,7 +41,7 @@ function composeImageUrl(size) {
           </svg>
         </div>
         <div class="lightbox-content" style="color: white;">
-          <img :src="composeImageUrl('full')">
+          <img :src="image">
         </div>
       </div>
     </Teleport>

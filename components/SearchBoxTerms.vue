@@ -83,7 +83,6 @@ function toggleSelectedSuggestion(suggestion) {
 <style scoped lang="scss">
 .search-box {
   position: relative;
-  z-index: 1000;
   display: flex;
   gap: 0.5rem;
   overflow: visible;
