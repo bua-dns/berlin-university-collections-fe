@@ -53,21 +53,23 @@ function getStrunzInfo(entry) {
     <h2 class="mb-4 text-center">Demonstrator Sammlungspräsentation<br></br>Mineralogische Sammlungen der TU</h2>
     <h1 class="page-header text-center">{{ item.mineral_denomination_inventory }} ({{
       item.inventory_number }})</h1>
-    <h3>Normdaten Mineral(e) lt. Schlagwortkartei</h3>
-    <div class="minerals-info" v-if="relevantMinerals.length > 0 && relevantMinerals[0].wikidata_label_de">
-      <div class="mineral-info-detail" v-for="mineral in relevantMinerals" :key="mineral.slug">
-        <div class="mineral-name-card">
-          {{ mineral.label }}
-        </div>
-        <div class="mineral-name">
-          {{ mineral.wikidata_label_de }} ({{ mineral.wikidata_label_en }})
-        </div>
-        <div class="strunz">
-          {{ getStrunzInfo(mineral) }}
-        </div>
-        <div class="wikidata-link">
-          <a :href="`https://www.wikidata.org/wiki/${mineral.wikidata_id}`" target="_blank">Wikidata ({{
-            mineral.wikidata_id }})</a>
+      <div class="backlink"><NuxtLinkLocale :tabIndex="tabIndex" @click="navState = 'close'" to="/mineraliensammlungen-tu">
+              zurück zur Übersicht</NuxtLinkLocale></div>
+              <h3>Normdaten Mineral(e) lt. Schlagwortkartei</h3>
+              <div class="minerals-info" v-if="relevantMinerals.length > 0 && relevantMinerals[0].wikidata_label_de">
+                <div class="mineral-info-detail" v-for="mineral in relevantMinerals" :key="mineral.slug">
+                  <div class="mineral-name-card">
+                    {{ mineral.label }}
+                  </div>
+                  <div class="mineral-name">
+                    {{ mineral.wikidata_label_de }} ({{ mineral.wikidata_label_en }})
+                  </div>
+                  <div class="strunz">
+                    {{ getStrunzInfo(mineral) }}
+                  </div>
+                  <div class="wikidata-link">
+                    <a :href="`https://www.wikidata.org/wiki/${mineral.wikidata_id}`" target="_blank">Wikidata ({{
+                      mineral.wikidata_id }})</a>
         </div>
         <div class="mindat">
           <a :href="`https://www.mindat.org/min-${mineral.mindat}.html`" target="_blank">Mindat ({{ mineral.mindat
@@ -92,33 +94,39 @@ function getStrunzInfo(entry) {
         <div class="field-label">Anzahl der Exemplare</div>
         <div class="field-value">
           <template
-            v-if="getCardEntriesValues('number_of_specimens_indication') && !getCardEntriesValues('number_of_specimens_interpretation')">
-            {{ getCardEntriesValues('number_of_specimens_indication') }}
-          </template>
-          <template v-if="getCardEntriesValues('number_of_specimens_interpretation')">
-            {{ getCardEntriesValues('number_of_specimens_interpretation') }}
-          </template>
-          <template
-            v-if="!getCardEntriesValues('number_of_specimens_interpretation') && !getCardEntriesValues('number_of_specimens_indication')">
-            1
-          </template>
-        </div>
-      </div>
+          v-if="getCardEntriesValues('number_of_specimens_indication') && !getCardEntriesValues('number_of_specimens_interpretation')">
+          {{ getCardEntriesValues('number_of_specimens_indication') }}
+        </template>
+        <template v-if="getCardEntriesValues('number_of_specimens_interpretation')">
+          {{ getCardEntriesValues('number_of_specimens_interpretation') }}
+        </template>
+        <template
+        v-if="!getCardEntriesValues('number_of_specimens_interpretation') && !getCardEntriesValues('number_of_specimens_indication')">
+        1
+      </template>
     </div>
-    <pre v-if="false">{{ relevantMinerals }}</pre>
-    <pre v-if="false">{{ item }}</pre>
-    <template v-if="item.representations && item.representations.length > 0">
-      <div class="credits">Objektfotografie: Felix Baum</div>
-      <div class="object-images">
-        <LightBoxMstubItem v-for="(image, index) in getImages(item.representations)" :key="index" :image="image" />
-      </div>
-    </template>
+  </div>
+</div>
+<pre v-if="false">{{ relevantMinerals }}</pre>
+<pre v-if="false">{{ item }}</pre>
+<template v-if="item.representations && item.representations.length > 0">
+  <div class="credits">Objektfotografie: Felix Baum</div>
+  <div class="object-images">
+    <LightBoxMstubItem v-for="(image, index) in getImages(item.representations)" :key="index" :image="image" />
+  </div>
+</template>
+<div class="backlink"><NuxtLinkLocale :tabIndex="tabIndex" @click="navState = 'close'" to="/mineraliensammlungen-tu">
+        zurück zur Übersicht</NuxtLinkLocale></div>
 
     <pre v-if="false">{{ slug }}</pre>
   </div>
 </template>
 <style lang="scss">
 .page.mstub-item {
+  .backlink {
+    text-align: center;
+    margin: 1.5rem auto;
+  }
   .minerals-info {
     padding-bottom: 1rem;
     margin-bottom: 2rem;
