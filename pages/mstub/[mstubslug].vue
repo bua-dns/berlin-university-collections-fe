@@ -71,7 +71,7 @@ function getStrunzInfo(entry) {
         </div>
         <div class="mindat">
           <a :href="`https://www.mindat.org/min-${mineral.mindat}.html`" target="_blank">Mindat ({{ mineral.mindat
-            }})</a>
+          }})</a>
         </div>
       </div>
     </div>
@@ -80,11 +80,11 @@ function getStrunzInfo(entry) {
         <div class="field-label">Verzeichnet in der Schlagwortkartei als</div>
         <div class="field-value">{{ getCardEntriesValues('mineral_denomination_card') }}</div>
       </div>
-      <div class="field">
+      <div class="field" v-if="item.acquisition_date">
         <div class="field-label">Erwerbungsdatum</div>
         <div class="field-value">{{ item.acquisition_date }}</div>
       </div>
-      <div class="field">
+      <div class="field" v-if="getCardEntriesValues('find_spot')">
         <div class="field-label">Fundortangaben in der Schlagwortkartei</div>
         <div class="field-value">{{ getCardEntriesValues('find_spot') }}</div>
       </div>
@@ -107,9 +107,13 @@ function getStrunzInfo(entry) {
     </div>
     <pre v-if="false">{{ relevantMinerals }}</pre>
     <pre v-if="false">{{ item }}</pre>
-    <div class="object-images" v-if="item.representations && item.representations.length > 0">
-      <LightBoxMstubItem v-for="(image, index) in getImages(item.representations)" :key="index" :image="image" />
-    </div>
+    <template v-if="item.representations && item.representations.length > 0">
+      <div class="credits">Objektfotografie: Felix Baum</div>
+      <div class="object-images">
+        <LightBoxMstubItem v-for="(image, index) in getImages(item.representations)" :key="index" :image="image" />
+      </div>
+    </template>
+
     <pre v-if="false">{{ slug }}</pre>
   </div>
 </template>
@@ -126,9 +130,11 @@ function getStrunzInfo(entry) {
       flex-direction: row;
       gap: 1rem;
       flex-wrap: wrap;
+
       .mineral-name-card {
         font-weight: bold;
       }
+
       .mineral-name {
         font-style: italic;
       }
@@ -138,9 +144,7 @@ function getStrunzInfo(entry) {
       }
 
       .wikidata-link,
-      .mindat {
-        
-      }
+      .mindat {}
     }
   }
 
@@ -158,7 +162,10 @@ function getStrunzInfo(entry) {
       }
     }
   }
-
+  .credits {
+    font-style: italic;
+    margin-bottom: 1rem;
+  }
   .object-images {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr));
