@@ -103,7 +103,11 @@ const tabIndex = computed(() => {
       <ul>
         <li>
           <NuxtLinkLocale :tabIndex="tabIndex" @click="navState = 'close'" to="/mineraliensammlungen-tu">
-            Mineralogische Sammlungen TU (Demonstrator)</NuxtLinkLocale>
+            {{ w.page_demonstrator_mstub }}</NuxtLinkLocale>
+        </li>
+        <li>
+          <NuxtLinkLocale :tabIndex="tabIndex" @click="navState = 'close'" to="/mineraliensammlungen-tu">
+            {{ w.page_demonstrator_vaafu }}</NuxtLinkLocale>
         </li>
         <li>
           <NuxtLinkLocale :tabIndex="tabIndex" @click="navState = 'close'" to="/data-inspector-ikb">
