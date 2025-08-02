@@ -40,5 +40,6 @@ export const projectConfig = {
       // '*.*',
       'id', 'status', 'title', 'slug', 'contact_info','spws_collections', 'description', 'trigger_warning',
     ],
+  
   }
 };

@@ -67,6 +67,20 @@ const { data: kmTopicsItemsData } = await useFetch(`${projectConfig.dataBaseUrl}
     limit: -1,
   }
 });
+const { data: cylinderSealsData } = await useFetch(`https://va-005-api.berlin-university-collections.de/api/digitized-items`, {
+  query: {
+    // provisorisch!
+    limit: 50,
+    'populate[0]': 'object_type',
+    'populate[1]': 'materials',
+    'populate[2]': 'techniques',
+    'populate[3]': 'main_image',
+    'populate[4]': 'event.event_type',
+    'populate[5]': 'event.event_date',
+    'populate[6]': 'event.place',
+    // 'populate[7]': 'event.description',
+  }
+});
 
 const theme = useState('theme', () => themeContent);
 useState('personsTeam', () => personsTeamContent);
@@ -81,7 +95,7 @@ useState('ikbConfiguration', () => ikbConfigurationData);
 useState('minerals', () => mstubMineralsData);
 useState('mstubItems', () => mstubItemsData);
 useState('kmTopics', () => kmTopicsItemsData);
-
+useState('cylinderSeals', () => cylinderSealsData);
 
 const w = theme.value.data.wording.de;
 useHead({
