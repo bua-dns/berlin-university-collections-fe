@@ -95,7 +95,7 @@ const seal = seals.find(item => item.slug === slug)
       </div>
     </div>
     <div class="backlink">
-      <NuxtLinkLocale :tabIndex="tabIndex" @click="navState = 'close'" to="/mineraliensammlungen-tu">
+      <NuxtLinkLocale :tabIndex="tabIndex" @click="navState = 'close'" to="/rollsiegel-fu">
         zurück zur Übersicht</NuxtLinkLocale>
     </div>
   </div>

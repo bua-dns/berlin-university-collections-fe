@@ -106,7 +106,7 @@ const tabIndex = computed(() => {
             {{ w.page_demonstrator_mstub }}</NuxtLinkLocale>
         </li>
         <li>
-          <NuxtLinkLocale :tabIndex="tabIndex" @click="navState = 'close'" to="/mineraliensammlungen-tu">
+          <NuxtLinkLocale :tabIndex="tabIndex" @click="navState = 'close'" to="/rollsiegel-fu">
             {{ w.page_demonstrator_vaafu }}</NuxtLinkLocale>
         </li>
         <li>
