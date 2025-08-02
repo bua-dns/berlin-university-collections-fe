@@ -84,7 +84,9 @@ onMounted(() => {
         <div class="collection-items">
           <CardCollectionItems v-for="item in samples" :key="item.id">
             <template #image v-if="item.representations && item.representations.length > 0">
-              <img :src="useGetMSTUBImageUrl(item.representations[0].directus_files_id)" alt="Item Image" />
+              <NuxtLinkLocale :to="`/mstub/${item.slug}`" class="">
+                <img :src="useGetMSTUBImageUrl(item.representations[0].directus_files_id)" alt="Item Image" />
+              </NuxtLinkLocale>
             </template>
             <template #image v-if="item.representations && item.representations.length === 0">
               <img class="image-placeholder" src="@/assets/img/image-placeholder.svg" alt="Item Image" />
