@@ -2,7 +2,8 @@
 const props = defineProps(['collection', 'termFilter', 'activeCollectionId']);
 defineEmits(['setTermFilter', 'setActiveCollectionId']);
 const theme = useState('theme');
-const w = theme.value.data.wording.de;
+const { locale } = useI18n();
+const w = computed(() => theme.value.data.wording[locale.value]);
 const taxonomies = theme.value.data.settings.taxonomies;
 
 function activeTerm(taxonomy, term) {
@@ -152,15 +153,23 @@ function getImageUrls(images){
           v-if="collection.dns_objects_in_external_databases && collection.dns_objects_in_external_databases.length > 1">
           <h3>Objekte in externen Datenbanken</h3>
         </template>
-        <div class="resource" v-for="(resource, id) in collection.dns_objects_in_external_databases"
-          :key="`resource-own${id}`">
+        <div class="resource" v-for="(resource, index) in collection.dns_objects_in_external_databases"
+          :key="`resource-own${index}`">
           <div class="resource-name">{{ resource.label }}</div>
-          <div class="resource-description" v-html="resource.description" />
+          <!-- 
+                    
+          DEV: Iterieren über verschachtelte Elemente in den Sprachversionen ermöglichen 
+           
+          
+          
+          -->
+          <div class="resource-description" v-html="useGetTranslatedRepeatableContent('description', locale, collection, index)" />
           <div class="resource-link">
             <a :href="resource.link" target="_blank" rel="noopener">zu den Objekten der Sammlung</a>
           </div>
         </div>
       </template>
+      <pre v-if="false">{{ collection }}</pre>
     </div>
     <div v-if="collection.collection_images && collection.collection_images.length" class="my-5 collection-images">
       <ImageViewer :images="getImageUrls(collection.collection_images) " previewMode="gallery"

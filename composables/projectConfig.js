@@ -15,6 +15,7 @@ export const projectConfig = {
       'dns_taxonomy_genre.taxonomy_terms_id.label',
       'dns_objects_in_external_databases',
       'dns_objects_in_own_databases',
+      'translations.*',
     ],
     collectionsShortList: [
       'id', 'spws_id', 'label'

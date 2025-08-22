@@ -21,7 +21,7 @@ const settings = theme.value.data.settings;
 data.value.data.forEach((collection) => {
   collection.display = true;
   // general opt-out via directus field 'exclude_from_listing'
-  if (collection.exclude_from_listing === '1') {
+  if (collection.exclude_from_listing === '1' || collection.hide === 'true') {
     collection.display = false;
   }
 });
@@ -340,12 +340,15 @@ onMounted(() => {
 </script>
 
 <template>
-
+  
   <Head>
     <Title>{{ w.page_collections }}</Title>
   </Head>
   <div class="grid-control-bar" id="grid-control-bar">
     <div class="basic-controls">
+      <div class="dev-output">
+        <pre v-if="false">{{ sortedData[0] }}</pre>
+      </div>
       <!-- <h2>Die {{ data.meta.total_count }} digital erfassten Sammlungen der BUA-Universitäten</h2> -->
       <div class="collections-counter">
         {{ w.num_collections }}: {{ data.meta.total_count }} {{ w.shown }}: {{ activeCollectionsNum }}
