@@ -161,7 +161,7 @@ const handleScroll = () => {
           padding: 0;
           a {
             display: block;
-            padding: 1rem;
+            padding: .7rem;
             text-decoration: none;
             color: var(--color-text);
             transition: all 0.25s;
@@ -213,6 +213,47 @@ const handleScroll = () => {
   }
 }
 @media screen and (min-width: 576px) {
+  header.scrolled {
+    .dns-logo-container {
+
+    }
+    .dns-site-title-container {
+      .dns-site-title {
+        font-size: 1rem;
+      }
+      .dns-site-subtitle {
+        font-size: .75rem;
+      }
+    }
+  }
+  header {
+    .dns-site-title-container {
+      .dns-site-title {
+
+        font-size: 1.5rem;
+        line-height: 1.5;
+      }
+      .dns-site-subtitle {
+        font-size: 1.125rem;
+        line-height: 1;
+      }
+    }
+  }
+
+  .scrolled {
+    height: var(--header-height-scrolled);
+    .dns-branding {
+      .dns-logo-container {
+
+
+        .dns-navbar-logo {
+          width: 3.25rem;
+        }
+      }
+    }
+  }
+}
+@media screen and (min-width: 1400px) {
   header.scrolled {
     .dns-logo-container {
 
