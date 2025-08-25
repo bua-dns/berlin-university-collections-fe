@@ -57,7 +57,7 @@ const images = project.images.map((image) => {
 .page.projects {
   .projects-content-container {
     display: block;
-    h4 {
+    h2, h3, h4 {
       margin: 0 0 1rem;
     }
   }

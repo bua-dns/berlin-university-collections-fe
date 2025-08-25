@@ -42,6 +42,9 @@ const page = data.value.data[0]
   .page-container {
     display: block;
     .page-content {
+      h2, h3, h4 {
+      margin: 0 0 1rem;
+    }
     }
     .sidebar {
       font-size: var(--font-size-text-small);
