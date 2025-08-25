@@ -128,17 +128,14 @@ function getImageUrls(images){
       <template v-if="collection.dns_objects_in_own_databases && collection.dns_objects_in_own_databases.length">
         <template
           v-if="collection.dns_objects_in_own_databases && collection.dns_objects_in_own_databases.length === 1">
-          <h3>Objekte in eigener Datenbank</h3>
+          <h3>{{ w['heading_own_resource'] }}</h3>
         </template>
-        <template v-if="collection.dns_objects_in_own_databases && collection.dns_objects_in_own_databases.length > 1">
-          <h3>Objekte in eigenen Datenbanken</h3>
-        </template>
-        <div class="resource" v-for="(resource, id) in collection.dns_objects_in_own_databases"
-          :key="`resource-own${id}`">
+        <div class="resource" v-for="(resource, index) in collection.dns_objects_in_own_databases"
+          :key="`resource-own${index}`">
           <div class="resource-name">{{ resource.label }}</div>
-          <div class="resource-description" v-html="resource.description" />
+          <div class="resource-description" v-html="useGetTranslatedRepeatableContent('description', locale, collection, index)" />
           <div class="resource-link">
-            <a :href="resource.link" target="_blank" rel="noopener">zu den Objekten der Sammlung</a>
+            <a :href="resource.link" target="_blank" rel="noopener">{{ w['see_objects_in_external_resource']}}</a>
           </div>
           <!-- {{ resource }} -->
         </div>
@@ -147,25 +144,18 @@ function getImageUrls(images){
         v-if="collection.dns_objects_in_external_databases && collection.dns_objects_in_external_databases.length">
         <template
           v-if="collection.dns_objects_in_external_databases && collection.dns_objects_in_external_databases.length === 1">
-          <h3>Objekte in externer Datenbank</h3>
+          <h3>{{ w['heading_external_resource'] }}</h3>
         </template>
         <template
           v-if="collection.dns_objects_in_external_databases && collection.dns_objects_in_external_databases.length > 1">
-          <h3>Objekte in externen Datenbanken</h3>
+          <h3>{{ w['heading_external_resources'] }}</h3>
         </template>
         <div class="resource" v-for="(resource, index) in collection.dns_objects_in_external_databases"
           :key="`resource-own${index}`">
           <div class="resource-name">{{ resource.label }}</div>
-          <!-- 
-                    
-          DEV: Iterieren über verschachtelte Elemente in den Sprachversionen ermöglichen 
-           
-          
-          
-          -->
           <div class="resource-description" v-html="useGetTranslatedRepeatableContent('description', locale, collection, index)" />
           <div class="resource-link">
-            <a :href="resource.link" target="_blank" rel="noopener">zu den Objekten der Sammlung</a>
+            <a :href="resource.link" target="_blank" rel="noopener">{{ w['see_objects_in_external_resource']}}</a>
           </div>
         </div>
       </template>
