@@ -32,10 +32,34 @@ const resources = resourcesData.value.data
 
 const { data:collectionsData } = await useFetch('https://sammlungsportal.bua-dns.de/items/bua_collections', {
   query: {
-    fields: 'id, label, current_keeper, dns_objects_in_external_databases, name, dns_objects_in_own_databases',
+    fields: 'id, label, current_keeper, dns_objects_in_external_databases, name, dns_objects_in_own_databases, translations.*',
     limit: -1,
   },
 });
+
+function getTranslatedRepeaterContent(translations, field, label, fallback, index) {
+  // Always return both languages; fall back to `fallback` if anything is missing
+  if (!Array.isArray(translations)) return { de: fallback, en: fallback };
+
+  // Build a quick lookup by language code
+  const byLang = Object.fromEntries(
+    translations.map(t => [t.languages_code, t])
+  );
+
+  const pick = (lang) => {
+    const t = byLang[lang];
+    const arr = t && Array.isArray(t[field]) ? t[field] : null;
+    const item = arr && arr[index] ? arr[index] : null;
+    const val = item && item[label];
+    return val ?? fallback;
+  };
+
+  return {
+    de: pick('de'),
+    en: pick('en'),
+  };
+}
+
 
 const ownResources = computed(() => {
   if (!collectionsData.value) return [];
@@ -46,6 +70,7 @@ const ownResources = computed(() => {
       label: collection.label,
       dns_objects_in_own_databases: collection.dns_objects_in_own_databases,
       currentKeeper: collection.current_keeper,
+      translations: collection.translations || [],
       
     }));
     let entries = [];
@@ -55,6 +80,7 @@ const ownResources = computed(() => {
           collection: collection.label, 
           id: collection.id,
           currentKeeper: collection.currentKeeper,
+          translations: collection.translations,
           ...resource,
         });
       }
@@ -92,6 +118,7 @@ const relatedCollections = computed(() => {
           collection: collection.label, 
           id: collection.id,
           currentKeeper: collection.current_keeper,
+          translations: collection.translations || [],
           ...collection.dns_objects_in_external_databases
             .find((item) => item.online_resource === resource.online_resource),
         });
@@ -203,7 +230,10 @@ function shortenKeeperInfo(keeper) {
               :cardImage="collection.screenshot"
               :cardTitle="collection.collection"
               :rubric="shortenKeeperInfo(collection.currentKeeper)"
-              :cardText="getCardText(collection.description, collection.more_items_hint)"
+              :cardText="getCardText(
+                getTranslatedRepeaterContent(collection.translations, 'dns_objects_in_own_databases', 'description', collection.description, 0)[locale],
+                collection.more_items_hint
+              )"
               :cardMoreButtonLabel="`zur Ressource (ca. ${ formatNumberWithPeriods(collection.amount_of_objects) } Objekte)`"
               :cardMoreButtonLink="collection.link"
               :cardTitleLink="collection.link"
@@ -239,13 +269,16 @@ function shortenKeeperInfo(keeper) {
             <h3 class="mb-4">{{ w.collections_in_bua_resource }}</h3>
             <div v-if="relatedCollections[resource.slug]" class=" page-card-grid mt-2">
               <div 
-                v-for="collection in sortEntries(relatedCollections[resource.slug], 'collection')"
-                :key="`collection-${collection.id}`">
+                v-for="(collection, index) in sortEntries(relatedCollections[resource.slug], 'collection')"
+                :key="`collection-${index}`">
                 <Card 
                   :cardImage="collection.screenshot"
                   :cardTitle="collection.collection"
                   :rubric="shortenKeeperInfo(collection.currentKeeper)"
-                  :cardText="getCardText(collection.description, collection.more_items_hint)"
+                  :cardText="getCardText(
+                    getTranslatedRepeaterContent(collection.translations, 'dns_objects_in_external_databases', 'description', collection.description, index)[locale],
+                    collection.more_items_hint
+                  )"
                   :cardMoreButtonLabel="`zur Ressource (ca. ${ formatNumberWithPeriods(collection.amount_of_objects) } Objekte)`"
                   :cardMoreButtonLink="collection.link"
                   :cardTitleLink="collection.link"
