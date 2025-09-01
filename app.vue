@@ -81,6 +81,13 @@ const { data: cylinderSealsData } = await useFetch(`https://va-005-api.berlin-un
     // 'populate[7]': 'event.description',
   }
 });
+const { data: demonstratorsData } = await useFetch(`${projectConfig.dataBaseUrl}/demonstrators`, {
+  query: {
+    fields: 'id, label, link, translations.*',
+    limit: -1,
+    meta: 'total_count',
+  }
+});
 
 const theme = useState('theme', () => themeContent);
 useState('personsTeam', () => personsTeamContent);
@@ -96,6 +103,7 @@ useState('minerals', () => mstubMineralsData);
 useState('mstubItems', () => mstubItemsData);
 useState('kmTopics', () => kmTopicsItemsData);
 useState('cylinderSeals', () => cylinderSealsData);
+useState('demonstrators', () => demonstratorsData);
 
 const w = theme.value.data.wording.de;
 useHead({
