@@ -12,6 +12,9 @@ const randImageRoutes = [
   'online-ressourcen',
   'online-ressourcen___de',
   'online-ressourcen___en',
+  'demos',
+  'demos___de',
+  'demos___en'
 ];
 const clientEnv = ref(false);
 

@@ -19,7 +19,7 @@ const demonstrators = demonstratorsData.value.data;
     <Title>{{ w.page_dns }}</Title>
   </Head>
   <div class="page p_dns-page" v-if="data">
-    <h1 class="page-header text-center" v-html="useGetTranslatedContent('title', locale, page)" />
+    <h1 class="page-header text-center pt-4" v-html="useGetTranslatedContent('title', locale, page)" />
     <template v-if="useGetTranslatedContent('sidebar_content', locale, page)">
       <div class="page-container">
         <div class="page-content">
