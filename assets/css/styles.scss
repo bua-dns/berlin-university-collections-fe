@@ -760,3 +760,12 @@ section {
   }
 }
 
+.btn-download {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.4rem;
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+
+}

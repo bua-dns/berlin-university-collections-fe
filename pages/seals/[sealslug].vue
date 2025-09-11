@@ -61,38 +61,10 @@ const seal = seals.find(item => item.slug === slug)
 
       </div>
     </div>
-    <div class="dev-output">
-      <pre v-if="false">{{ seal }}</pre>
-    </div>
-    <div class="metadata" v-if="false">
-      <div class="field">
-        <div class="field-label">Verzeichnet in der Schlagwortkartei als</div>
-        <div class="field-value">{{ getCardEntriesValues('mineral_denomination_card') }}</div>
-      </div>
-      <div class="field" v-if="item.acquisition_date">
-        <div class="field-label">Erwerbungsdatum</div>
-        <div class="field-value">{{ item.acquisition_date }}</div>
-      </div>
-      <div class="field" v-if="getCardEntriesValues('find_spot')">
-        <div class="field-label">Fundortangaben in der Schlagwortkartei</div>
-        <div class="field-value">{{ getCardEntriesValues('find_spot') }}</div>
-      </div>
-      <div class="field">
-        <div class="field-label">Anzahl der Exemplare</div>
-        <div class="field-value">
-          <template
-            v-if="getCardEntriesValues('number_of_specimens_indication') && !getCardEntriesValues('number_of_specimens_interpretation')">
-            {{ getCardEntriesValues('number_of_specimens_indication') }}
-          </template>
-          <template v-if="getCardEntriesValues('number_of_specimens_interpretation')">
-            {{ getCardEntriesValues('number_of_specimens_interpretation') }}
-          </template>
-          <template
-            v-if="!getCardEntriesValues('number_of_specimens_interpretation') && !getCardEntriesValues('number_of_specimens_indication')">
-            1
-          </template>
-        </div>
-      </div>
+
+    <div class="share-buttons">
+      <DownloadJsonButton :data="seal" filename="mapped-items.json" label="Objektdaten als JSON herunterladen"/>
+      <CopyJsonButton :data="seal" label="Objektdaten als JSON kopieren" :pretty="true" />
     </div>
     <div class="backlink">
       <NuxtLinkLocale :tabIndex="tabIndex" @click="navState = 'close'" to="/rollsiegel-fu">
@@ -106,18 +78,22 @@ const seal = seals.find(item => item.slug === slug)
     text-align: center;
     margin: 1.5rem auto;
   }
+
   .object-image {
     text-align: center;
     position: relative;
+
     img {
       margin: 0 auto;
       max-width: 100%;
       height: auto;
       border: 2px solid var(--color-border);
     }
+
     .hint {
       display: none;
     }
+
     &:hover .hint {
       position: absolute;
       top: 0;
@@ -132,6 +108,7 @@ const seal = seals.find(item => item.slug === slug)
       color: var(--color-link)
     }
   }
+
   .metadata {
     margin: 2rem 0;
 
@@ -151,6 +128,11 @@ const seal = seals.find(item => item.slug === slug)
     font-style: italic;
     margin-bottom: 1rem;
   }
+  .share-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
 }
-
 </style>
