@@ -12,7 +12,6 @@ const status = ref('')
 let timer = null
 
 async function copy() {
-  // ✅ modern check
   if (!import.meta.client) return
 
   const text = props.pretty
@@ -46,32 +45,30 @@ function show(msg) {
   timer = setTimeout(() => (status.value = ''), props.feedbackMs)
 }
 </script>
+
 <!-- components/CopyJsonButton.vue -->
 <template>
-  <div class="inline-flex items-center gap-2">
-    <button
-      type="button"
-      @click="copy"
-      class="btn btn-primary btn-download"
-      :title="`Copy ${label} to clipboard`"
-    >
+  <div class="copy-json-button">
+    <button type="button" @click="copy" class="btn btn-primary btn-download" :title="`Copy ${label} to clipboard`">
       {{ label }}
     </button>
 
-    <!-- brief feedback -->
-    <span
-      v-if="status"
-      class="feedback"
-      aria-live="polite"
-      role="status"
-    >
+    <!-- absolute feedback -->
+    <div v-if="status" class="feedback" aria-live="polite" role="status">
       {{ status }}
-    </span>
+    </div>
   </div>
 </template>
+
 <style scoped lang="scss">
+.copy-json-button {
+  position: relative;
+}
 .feedback {
-  font-size: 0.875rem;
-  padding-left: 0.5rem;
+  position: absolute;
+  top: 105%;
+  font-size: 0.75rem;
+  color: #4b5563; // Tailwind gray-600 equivalent
+  white-space: nowrap;
 }
 </style>
