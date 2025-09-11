@@ -77,7 +77,7 @@ const { data: cylinderSealsData } = await useFetch(`https://va-005-api.berlin-un
     'populate[3]': 'main_image',
     'populate[4]': 'event.event_type',
     'populate[5]': 'event.event_date',
-    'populate[6]': 'event.place',
+    'populate[6]': 'event.place.vocab_terms',
     // 'populate[7]': 'event.description',
   }
 });
