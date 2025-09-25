@@ -15,7 +15,7 @@ const w = computed(() => theme.value.data.wording[locale.value]);
 
 // DEV: replace by slug from path
 const slug = 'online-ressourcen'
-const titleWording = 'page_online-ressourcen'
+// const titleWording = 'page_online-ressourcen'
 
 const { data } = await useFetchPage(slug)
 const page = data.value.data[0]
@@ -37,27 +37,57 @@ const { data:collectionsData } = await useFetch('https://sammlungsportal.bua-dns
   },
 });
 
-function getTranslatedRepeaterContent(translations, field, label, fallback, index) {
-  // Always return both languages; fall back to `fallback` if anything is missing
-  if (!Array.isArray(translations)) return { de: fallback, en: fallback };
+// function getTranslatedRepeaterContent(translations, field, label, fallback, index) {
+//   // Always return both languages; fall back to `fallback` if anything is missing
+//   if (!Array.isArray(translations)) return { de: fallback, en: fallback };
 
-  // Build a quick lookup by language code
-  const byLang = Object.fromEntries(
-    translations.map(t => [t.languages_code, t])
-  );
+//   // Build a quick lookup by language code
+//   const byLang = Object.fromEntries(
+//     translations.map(t => [t.languages_code, t])
+//   );
 
-  const pick = (lang) => {
-    const t = byLang[lang];
-    const arr = t && Array.isArray(t[field]) ? t[field] : null;
-    const item = arr && arr[index] ? arr[index] : null;
-    const val = item && item[label];
-    return val ?? fallback;
-  };
+//   const pick = (lang) => {
+//     const t = byLang[lang];
+//     const arr = t && Array.isArray(t[field]) ? t[field] : null;
+//     const item = arr && arr[index] ? arr[index] : null;
+//     const val = item && item[label];
+//     return val ?? fallback;
+//   };
 
-  return {
-    de: pick('de'),
-    en: pick('en'),
-  };
+//   return {
+//     de: pick('de'),
+//     en: pick('en'),
+//   };
+// }
+
+function getTranslatedRepeaterContentFixed(collection, locale, dbType) {
+  if (!collection) return '';
+  if (!collection.translations || !Array.isArray(collection.translations)) return collection.description || '';
+
+  const translation = collection.translations.find(t => t.languages_code === locale && Array.isArray(t[dbType]) && t[dbType].some(item => item.label === collection.label));
+
+  // console.log(translation);
+
+  if (translation) {
+    const entry = translation[dbType].find(item => item.label === collection.label);
+    if (entry && entry.description) {
+      return entry.description;
+    }
+  }
+
+  // try to fall back to German translation
+  if (locale !== 'de') {
+    const deTranslation = collection.translations.find(t => t.languages_code === 'de' && Array.isArray(t[dbType]) && t[dbType].some(item => item.label === collection.label));
+    if (deTranslation) {
+      const entry = deTranslation[dbType].find(item => item.label === collection.label);
+      if (entry && entry.description) {
+        return entry.description;
+      }
+    }
+  }
+
+  return collection.description || '';
+
 }
 
 
@@ -71,13 +101,13 @@ const ownResources = computed(() => {
       dns_objects_in_own_databases: collection.dns_objects_in_own_databases,
       currentKeeper: collection.current_keeper,
       translations: collection.translations || [],
-      
+
     }));
     let entries = [];
     for (let collection of collections) {
       for (let resource of collection.dns_objects_in_own_databases) {
         entries.push({
-          collection: collection.label, 
+          collection: collection.label,
           id: collection.id,
           currentKeeper: collection.currentKeeper,
           translations: collection.translations,
@@ -91,7 +121,7 @@ const ownResources = computed(() => {
         if (a.collection > b.collection) return 1;
         return 0;
       });
-      
+
 });
 
 function sortEntries(entries, field) {
@@ -115,7 +145,7 @@ const relatedCollections = computed(() => {
     for (let resource of collection.dns_objects_in_external_databases) {
       if (index[resource.online_resource]) {
         index[resource.online_resource].push({
-          collection: collection.label, 
+          collection: collection.label,
           id: collection.id,
           currentKeeper: collection.current_keeper,
           translations: collection.translations || [],
@@ -186,9 +216,18 @@ function shortenKeeperInfo(keeper) {
     <Title>{{ w.page_online_ressourcen }}</Title>
   </Head>
   <div class="page wide segmented online-resources" v-if="data && page.status === 'published'">
+    <pre v-if="false" style="background-color: #fff;">
+      foo - resourcesData
+      {{ resourcesData }}
+      <hr></hr>foo - collectionsData
+      {{ collectionsData }}
+      <hr></hr>foo - ownResources
+      {{ ownResources }}
+      <hr></hr>foo - relatedCollections
+      {{ relatedCollections }}
+    </pre>
     <template v-if="!page.display_sidebar">
       <section class="controls page-segment">
-        
         <div class="page-content" v-html="useGetTranslatedContent('page_content', locale, page)" />
       </section>
     </template>
@@ -201,7 +240,9 @@ function shortenKeeperInfo(keeper) {
             <img :src="projectConfig.imageBaseUrl + '/' + page.sidebar_header_image + '?key=sidebar-header'"
               alt="sidebar image" />
           </div>
-          <div class="sidebar-content" v-if="page.sidebar_content" v-html="useGetTranslatedContent('sidebar_content', locale, page)" />
+          <div v-if="page.sidebar_content"
+            class="sidebar-content"
+            v-html="useGetTranslatedContent('sidebar_content', locale, page)" />
         </div>
       </section>
     </template>
@@ -213,8 +254,10 @@ function shortenKeeperInfo(keeper) {
         </button>
       </div>
       <div class="resource-cloud">
-        <button v-for="resource in resources" :key="`resource-${resource.id}`"
-          @click="selectResource(resource.id)" class="tag">
+        <button v-for="resource in resources"
+          :key="`resource-${resource.id}`"
+          @click="selectResource(resource.id)"
+          class="tag">
           <span class="tag-name">{{ resource.name }}</span>
           <span class="tag-count">{{ relatedCollections[resource.slug].length }}</span>
         </button>
@@ -226,27 +269,28 @@ function shortenKeeperInfo(keeper) {
           <h2>{{ w.online_resources_own_resources }}</h2>
         </section>
         <section class="own-resources page-segment page-card-grid">
-            <Card v-for="(collection, index) in ownResources" :key="`own-${index}`"
-              :cardImage="collection.screenshot"
-              :cardTitle="collection.collection"
-              :rubric="shortenKeeperInfo(collection.currentKeeper)"
-              :cardText="getCardText(
-                getTranslatedRepeaterContent(collection.translations, 'dns_objects_in_own_databases', 'description', collection.description, 0)[locale],
+          <Card v-for="(collection, index) in ownResources"
+            :key="`own-${index}`"
+            :cardImage="collection.screenshot"
+            :cardTitle="collection.collection"
+            :rubric="shortenKeeperInfo(collection.currentKeeper)"
+            :cardText="getCardText(
+                // getTranslatedRepeaterContent(collection.translations, 'dns_objects_in_own_databases', 'description', collection.description, 0)[locale],
+                getTranslatedRepeaterContentFixed(collection, locale, 'dns_objects_in_own_databases'),
                 collection.more_items_hint
               )"
-              :cardMoreButtonLabel="`zur Ressource (ca. ${ formatNumberWithPeriods(collection.amount_of_objects) } Objekte)`"
-              :cardMoreButtonLink="collection.link"
-              :cardTitleLink="collection.link"
-              :cardBodyMinHeight="collectionCardMinHeight"
-            />
+            :cardMoreButtonLabel="`zur Ressource (ca. ${ formatNumberWithPeriods(collection.amount_of_objects) } Objekte)`"
+            :cardMoreButtonLink="collection.link" :cardTitleLink="collection.link"
+            :cardBodyMinHeight="collectionCardMinHeight" />
         </section>
       </div>
       <div class="external-database-listing">
         <section class="external-resources page-segment">
           <h2>{{ w.online_resources_external_resources }}</h2>
         </section>
-        <section class="resource-entry page-segment" v-for="resource in resources" 
-          :key="resource.id" 
+        <section v-for="resource in resources"
+          class="resource-entry page-segment"
+          :key="resource.id"
           :id="`resource-${resource.id}`">
           <h2>
             <a :href="resource.url" :alt="`Link zu ${resource.name}`" target="_blank">
@@ -266,31 +310,27 @@ function shortenKeeperInfo(keeper) {
             </div>
           </div>
           <div class="collection-listing mt-5">
-            <h3 class="mb-4">{{ w.collections_in_bua_resource }}</h3>
+            <h3 class="mb-4">{{ w.collections_in_bua_resource }} - {{ resource.slug }}</h3>
             <div v-if="relatedCollections[resource.slug]" class=" page-card-grid mt-2">
-              <div 
-                v-for="(collection, index) in sortEntries(relatedCollections[resource.slug], 'collection')"
+              <div v-for="(collection, index) in sortEntries(relatedCollections[resource.slug], 'collection')"
                 :key="`collection-${index}`">
-                <Card 
+                <Card
                   :cardImage="collection.screenshot"
                   :cardTitle="collection.collection"
                   :rubric="shortenKeeperInfo(collection.currentKeeper)"
                   :cardText="getCardText(
-                    getTranslatedRepeaterContent(collection.translations, 'dns_objects_in_external_databases', 'description', collection.description, index)[locale],
+                    getTranslatedRepeaterContentFixed(collection, locale, 'dns_objects_in_external_databases'),
                     collection.more_items_hint
                   )"
                   :cardMoreButtonLabel="`zur Ressource (ca. ${ formatNumberWithPeriods(collection.amount_of_objects) } Objekte)`"
-                  :cardMoreButtonLink="collection.link"
-                  :cardTitleLink="collection.link"
-                  :cardBodyMinHeight="collectionCardMinHeight"
-                />
+                  :cardMoreButtonLink="collection.link" :cardTitleLink="collection.link"
+                  :cardBodyMinHeight="collectionCardMinHeight" />
               </div>
             </div>
           </div>
         </section>
       </div>
     </div>
-    
   </div>
 </template>
 
@@ -305,7 +345,7 @@ function shortenKeeperInfo(keeper) {
     .sidebar {
       .sidebar-header {
         display: none;
-           
+
       }
     }
   }
@@ -319,7 +359,7 @@ function shortenKeeperInfo(keeper) {
       flex-wrap: wrap;
       gap: .5rem;
       justify-content: center;
-      
+
       .tag {
         .tag-name {
             display: inline-block;
@@ -377,7 +417,7 @@ function shortenKeeperInfo(keeper) {
     margin-bottom: 4rem;
     @media screen and (min-width: 576px){
       grid-template-columns: repeat(auto-fill, minmax(var(--feature-card-width), 1fr));
-      
+
     }
   }
 }
@@ -386,11 +426,11 @@ function shortenKeeperInfo(keeper) {
     .page-container {
         display: flex;
         gap: 2.5rem;
-    
+
         .page-content {
           flex: 2;
         }
-    
+
         .sidebar {
           .sidebar-header {
             display: block;
@@ -399,7 +439,7 @@ function shortenKeeperInfo(keeper) {
         }
       }
   }
-  
+
 }
 
 </style>
