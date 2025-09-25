@@ -1,7 +1,7 @@
 <script setup>
 
 const props = defineProps({
-  entity: { 
+  entity: {
     type: Object
   }
 });
@@ -74,11 +74,11 @@ const startItemIndex = computed(() => (page.value - 1) * pageSize + 1);
 const endItemIndex = computed(() => Math.min(page.value * pageSize, relatedItems.value.length));
 
 const entityUrl = `https://ikb-lbs-hub.bua-dns.de/items/wd_entities/${props.entity.id}`;
-console.log(entityUrl);
+// console.log(entityUrl);
 const { data: fullEntityData } = await useFetch(entityUrl);
 const fullEntity = computed(() => {
   return fullEntityData.value.data;
-}); 
+});
 </script>
 
 <template>
@@ -88,10 +88,10 @@ const fullEntity = computed(() => {
       <div class="dev-output" v-if="false && relatedAMItemsData">
         {{ relatedAMItemsData }}
       </div>
-      <a 
+      <a
         :href="`https://wikidata.org/wiki/${entity.q_number}`"
         class="wd-link"
-        target="_blank"  
+        target="_blank"
       >
         <img src="@/assets/img/Wikidata.svg" alt="Wikidata Logo" >
         <span>Dieses Objekt auf Wikidata ansehen</span>
@@ -108,11 +108,11 @@ const fullEntity = computed(() => {
         </div>
       </div>
     </div>
-    
+
     <div class="pagination" v-if="relatedItems.length > 6">
       <div class="counter">
         {{numberOfAllRelatedMedia }} Medien, die dieses Objekt zeigen
-      </div> 
+      </div>
       <template v-if="numberOfPages > 1">
         <div class="pagination-nav">
             <div class="to-start" @click="setPage('start')" :class="{ 'disabled': page === 1 }">|<</div>
@@ -128,18 +128,18 @@ const fullEntity = computed(() => {
       <div class="item" v-for="item in getPage(relatedItems)" :key="`item-${item.id}`">
         <IKBItem :item="item" />
       </div>
-      
+
     </div>
     <h4 v-if="relatedAMItems && relatedAMItems.length > 0">Medien aus dem Architekturmuseum der TU Berlin</h4>
     <div class="items-listing" v-if="relatedAMItems && relatedAMItems.length > 0">
-      
+
       <div class="item" v-for="item in relatedAMItems" :key="`item-${item.id}`">
         <AMItem :item="item" />
       </div>
     </div>
     <h4 v-if="relatedTHSItems && relatedTHSItems.length > 0">Medien aus den Theaterhistorischen Sammlungen der FU Berlin</h4>
     <div class="items-listing" v-if="relatedTHSItems && relatedTHSItems.length > 0">
-      
+
       <div class="item" v-for="item in relatedTHSItems" :key="`item-${item.id}`">
         <THSItem :item="item" />
       </div>
@@ -175,7 +175,7 @@ const fullEntity = computed(() => {
         margin-bottom: 0.5rem;
       }
       .wd-classification-entry {
-        
+
       }
     }
   }
@@ -199,12 +199,12 @@ const fullEntity = computed(() => {
       opacity: 0.2;
       cursor: default;
     }
-    
+
   }
   .indicator {
     flex-basis: 8rem;
     text-align: center;
-  } 
+  }
 }
 .items-listing {
   display: flex;
@@ -217,7 +217,7 @@ const fullEntity = computed(() => {
     }
     .basic-info {
       font-size: 0.8rem;
-    } 
+    }
   }
 }
 </style>

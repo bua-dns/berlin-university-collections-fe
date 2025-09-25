@@ -28,7 +28,7 @@ const selectedMineral = ref(null);
 function selectMineral(mineral) {
   if (selectedMineral.value && selectedMineral.value.label === mineral) {
     selectedMineral.value = null;
-    console.log('post', mineral, selectedMineral.value?.label);
+    // console.log('post', mineral, selectedMineral.value?.label);
     displayMode.value = "categories";
     return;
   }
@@ -84,7 +84,7 @@ const displayMode = ref("categories");
               Wikidata ({{ selectedMineral.wikidata_id }})
             </a></h5>
             <h5 v-if="selectedMineral.mindat">
-              <a 
+              <a
                 :href="`https://www.mindat.org/min-${selectedMineral.mindat}.html`"
                 target="_blank" title="Link zum Mindat-Eintrag">Mindat ({{ selectedMineral.mindat }})
               </a>
@@ -117,7 +117,7 @@ const displayMode = ref("categories");
       padding: 0.25rem 0.5rem;
       border-radius: 0.25rem;
       margin-left: 0.5rem;
-    } 
+    }
   }
   .display-entities {
     margin-top: 2rem;
@@ -245,7 +245,7 @@ const displayMode = ref("categories");
     .labeling {
     }
     .reference-data {
-      
+
     }
     .cover-image {
       img {

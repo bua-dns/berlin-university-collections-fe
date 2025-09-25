@@ -166,7 +166,7 @@ function scrollToEntry(entry) {
   setTimeout(() => {
     scrollTarget.scrollIntoView({ behavior: "smooth" });
   }, 100);
-  console.log('scrolling to', entry);
+  // console.log('scrolling to', entry);
 }
 function setQueryParamResource(resourceId) {
   const params = {
