@@ -7,7 +7,7 @@
 const props = defineProps({
   images: { // expects directus download filenames with extension
     type: Array
-  }, 
+  },
   startImage: {
     type: String,
     default: '0'
@@ -19,11 +19,15 @@ const props = defineProps({
   previewMode: { // 'gallery' or 'single'
     type: String,
     default: 'single'
-  }, 
+  },
   previewImageWidth: { // width of preview image in pixels
     type: String,
     default: '240'
-  }, 
+  },
+  fourInARow: { // only for gallery mode, if true, forces 4 images in a row
+    type: Boolean,
+    default: false
+  }
 });
 const emit = defineEmits(['close']);
 const theme = useState('theme');
@@ -75,6 +79,7 @@ function getPreviewImageStyles() {
 }
 function getPreviewImageGridStyles() {
   if(props.previewMode !== 'gallery') return '';
+  if(props.fourInARow) return 'grid-template-columns: repeat(4, 1fr);';
   return `grid-template-columns: repeat(auto-fill, minmax(${props.previewImageWidth || 220}px, 250px));`;
 }
 </script>
@@ -83,8 +88,8 @@ function getPreviewImageGridStyles() {
   <div class="image-viewer-component">
     <template v-if="props.previewMode === 'single' || !props.previewMode">
       <div class="preview-single">
-        <img @click="openLightbox(0)" 
-          :src="composeImageUrl(getPreview(), 'preview')" 
+        <img @click="openLightbox(0)"
+          :src="composeImageUrl(getPreview(), 'preview')"
           alt=""
           :style="getPreviewImageStyles()"
         >
@@ -92,9 +97,9 @@ function getPreviewImageGridStyles() {
     </template>
     <template v-if="props.previewMode === 'gallery'">
       <div class="previews-gallery" :style="getPreviewImageGridStyles()">
-        <img v-for="(image, index) in props.images" 
-          :key="index" 
-          :src="composeImageUrl(image, 'preview')" 
+        <img v-for="(image, index) in props.images"
+          :key="index"
+          :src="composeImageUrl(image, 'preview')"
           alt=""
           @click="openLightbox(index)"
         >
@@ -129,12 +134,12 @@ function getPreviewImageGridStyles() {
         </div>
     </Teleport>
   </div>
-  
+
 </template>
 
 <style lang='scss'>
 .image-viewer-component {
-  
+
   // general behavior of img elements
   img {
     display: block;

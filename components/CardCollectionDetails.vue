@@ -19,7 +19,7 @@ function filterValues(values, field) {
     });
   }
   return values;
-} 
+}
 
 
 const showLightbox = ref(false);
@@ -162,8 +162,8 @@ function getImageUrls(images){
       <pre v-if="false">{{ collection }}</pre>
     </div>
     <div v-if="collection.collection_images && collection.collection_images.length" class="my-5 collection-images">
-      <ImageViewer :images="getImageUrls(collection.collection_images) " previewMode="gallery"
-        previewImageWidth="120" />
+      <ImageViewer :images="getImageUrls(collection.collection_images)" previewMode="gallery"
+        previewImageWidth="120" fourInARow="true" />
     </div>
     <div class="tag-navigation-title"><strong>{{ w.tag_navigation_title }}</strong>{{ w.tag_navigation_hint }}</div>
     <div class="tag-navigation">
