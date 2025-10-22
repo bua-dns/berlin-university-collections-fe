@@ -73,7 +73,6 @@ const demonstrators = demonstratorsData.value.data;
       .sidebar-header {
         display: none;
 
-        img {}
       }
     }
   }
