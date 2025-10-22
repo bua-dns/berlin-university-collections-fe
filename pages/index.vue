@@ -79,6 +79,29 @@ const newscardstrans = computed(() => {
     });
 });
 
+const carouselConfig = {
+  // height: '60vh',
+  itemsToShow: 1,
+  gap: 10,
+  // autoplay: 4000,
+  wrapAround: true,
+  snapAlign: 'start',
+  // pauseAutoplayOnHover: false,
+  // transition: 1500,
+  breakpoints: {
+    644: {
+      itemsToShow: 2,
+      snapAlign: 'start',
+      // gap: 10,
+    },
+    928: {
+      itemsToShow: 3,
+      snapAlign: 'start',
+      // gap: 10,
+    },
+  },
+};
+
 </script>
 <template>
 
@@ -93,7 +116,8 @@ const newscardstrans = computed(() => {
         <div class="intro-text" v-html="useGetTranslatedContent('intro', locale, page)"></div>
       </div>
     </section>
-    <section class="page-segment">
+
+    <!-- <section class="page-segment">
       <h2 class="text-center section-heading-lg">{{ w.news }}</h2>
       <div class="cards mt-3">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
@@ -111,6 +135,29 @@ const newscardstrans = computed(() => {
           </div>
         </div>
       </div>
+    </section> -->
+
+    <!-- slider -->
+    <section class="page-segment">
+      <h2 class="text-center section-heading-lg mb-3">{{ w.news }}</h2>
+      <Carousel v-bind="carouselConfig" breakpoint-mode="carousel" class="vue-carousel-news-cards">
+        <Slide v-for="slide in newscardstrans" :key="slide.id">
+          <div class="carousel__item card h-100">
+            <div class="card-body">
+              <h3 class="slide-title card-title mb-3">{{ slide.title }}</h3>
+              <div class="slide-content card-text" v-html="slide.body"></div>
+            </div>
+            <div class="slide-more card-footer text-center">
+              <NuxtLinkLocale :to=" slide.more_button_link" class="btn btn-primary">{{ slide.more_button_label }}
+              </NuxtLinkLocale>
+            </div>
+          </div>
+        </Slide>
+        <template #addons>
+          <Navigation />
+          <Pagination />
+        </template>
+      </Carousel>
     </section>
     <!-- University cards -->
     <section class=" mt-4 university-collections page-segment">
@@ -132,9 +179,7 @@ const newscardstrans = computed(() => {
         <pre v-if="false">{{ taxonomyTerms }}</pre>
         <div class="subject-grid">
           <div v-for="(subject, idx) in subjects" :key="idx" class="card dns-card selection-card">
-            <NuxtLink :to="'/sammlungen?dns_taxonomy_subjects=' + getLabelUrl(subject.label)"
-              class="card-link medium"
-            >
+            <NuxtLink :to="'/sammlungen?dns_taxonomy_subjects=' + getLabelUrl(subject.label)" class="card-link medium">
               {{ useGetTranslatedContent('label', locale, subject) }}
             </NuxtLink>
           </div>
@@ -145,8 +190,7 @@ const newscardstrans = computed(() => {
         <div class="subject-grid">
           <div v-for="(type, idx) in objectTypes" :key="idx" class="card dns-card selection-card">
             <NuxtLink :to="'/sammlungen?dns_taxonomy_genre=' +
-              getLabelUrl(type.label)" class="card-link medium"
-            >
+              getLabelUrl(type.label)" class="card-link medium">
               {{ useGetTranslatedContent('label', locale, type) }}
             </NuxtLink>
           </div>
@@ -156,18 +200,16 @@ const newscardstrans = computed(() => {
     <!-- Featured cards -->
     <section class="mt-4 featured-cards page-segment">
       <h2 class=" mb-lg-4 text-center section-heading">{{ w.featured_heading }}</h2>
-      <div class="intro" v-if="homepage.data.cardset_featured_intro" v-html="useGetTranslatedContent('cardset_featured_intro', locale, page)" />
+      <div class="intro" v-if="homepage.data.cardset_featured_intro"
+        v-html="useGetTranslatedContent('cardset_featured_intro', locale, page)" />
       <div class="features-grid">
         <div v-for="(card, index) in featuredCards" :key="`card-${index}`" class="feature-card">
-          <!-- <pre>{{ card }}</pre> 
+          <!-- <pre>{{ card }}</pre>
            {{ useGetTranslatedContent('title', locale, card.navigation_cards_id) }}-->
-          <Card 
-            :cardImage="card.card_image.filename_disk" 
-            :cardTitle="useGetTranslatedContent('title', locale, card)" 
+          <Card :cardImage="card.card_image.filename_disk" :cardTitle="useGetTranslatedContent('title', locale, card)"
             :cardText="useGetTranslatedContent('card_text', locale, card)"
-            :cardMoreButtonLabel="useGetTranslatedContent('more_button_label', locale, card)" 
-            :cardMoreButtonLink="card.more_button_link"
-            cardBodyMinHeight="13rem" />
+            :cardMoreButtonLabel="useGetTranslatedContent('more_button_label', locale, card)"
+            :cardMoreButtonLink="card.more_button_link" cardBodyMinHeight="13rem" />
         </div>
       </div>
     </section>
@@ -340,6 +382,22 @@ const newscardstrans = computed(() => {
 
 .card.featured {
   background-color: var(--color-bua-brown-light);
+}
+
+.vue-carousel-news-cards {
+  margin: 0;
+  padding: 0 30px;
+  .carousel__viewport {
+    margin-bottom: 40px;
+    padding: 0 2px;
+  }
+  .carousel__pagination {
+    bottom: -40px;
+    // bottom: 0;
+  }
+  .carousel__slide {
+    padding: 0 3px;
+  }
 }
 
 </style>

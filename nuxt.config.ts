@@ -58,7 +58,8 @@ export default defineNuxtConfig({
     '@/assets/css/styles.scss'
   ],
 
-  modules: ['@nuxt/content', '@pinia/nuxt', "@nuxtjs/i18n"],
+  modules: ['@nuxt/content', '@pinia/nuxt', "@nuxtjs/i18n", "vue3-carousel-nuxt"],
+  // modules: ['@nuxt/content', '@pinia/nuxt', "@nuxtjs/i18n"],
 
   plugins: [
     '~/plugins/matomo.js'
@@ -69,6 +70,11 @@ export default defineNuxtConfig({
     locales: ['de', 'en'],
     defaultLocale: "de",
     vueI18n: './i18n.config.js',
+    // see: https://github.com/nuxt-modules/i18n/issues/3238#issuecomment-2672492536
+    // update i18n because of https://github.com/nuxt-modules/i18n/issues/3720
+    bundle: {
+      optimizeTranslationDirective: false,
+    },
   },
 
   compatibilityDate: "2025-03-06",
