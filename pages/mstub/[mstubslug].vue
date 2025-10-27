@@ -8,6 +8,9 @@ const slug = route.params['mstubslug']
 
 /* Used auto-imported composables: projectConfig */
 
+const oneItemData = await $fetch(`/api/mstub/item/${slug}`)
+
+
 const mineralsData = useState("minerals")
 const mstubItemsData = useState("mstubItems")
 
@@ -108,7 +111,7 @@ function getStrunzInfo(entry) {
   </div>
 </div>
 <pre v-if="false">{{ relevantMinerals }}</pre>
-<pre v-if="false">{{ item }}</pre>
+<pre v-if="true">{{ oneItemData }}</pre>
 <template v-if="item.representations && item.representations.length > 0">
   <div class="credits">Objektfotografie: Felix Baum</div>
   <div class="object-images">

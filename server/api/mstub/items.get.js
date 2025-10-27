@@ -1,8 +1,8 @@
 export default defineEventHandler(async (event) => {
   try {
-    const data = await $fetch("https://mstub-db.bua-dns.de/items/minerals", {
+    const data = await $fetch("https://mstub-db.bua-dns.de/items/collection_items", {
       query: {
-        fields: "*.*",
+        fields: "*.*, card_entries.card_entries_id.*",
         limit: -1,
       },
     })

@@ -19,9 +19,9 @@ const currentMineral = computed(() => mineralStore.currentMineral)
 // Fetch minerals from the new API route
 const mineralsData = useState("minerals")
 const minerals = mineralsData.value.data || []
-const mstubItemsData = useState("mstubItems")
+const mstubItemsData = await $fetch('/api/collection-items')
 
-const mstubItems = mstubItemsData.value?.data || []
+const mstubItems = mstubItemsData.mstub?.data || []
 // const sample = mstubItems.filter((item) => item.representations && item.representations.length > 0).slice(0, 50) || []
 const samples = ref([])
 // const currentMineral = ref(null);
@@ -136,7 +136,7 @@ onMounted(() => {
           </template>
         </CardCollectionItems>
       </div>
-      <pre v-if="true">minerals {{ mineralsData }}</pre>
+      <pre v-if="true">mstubData {{ mstubItemsData }}</pre>
       <pre v-if="false">samples {{ samples }}</pre>
     </section>
   </div>
