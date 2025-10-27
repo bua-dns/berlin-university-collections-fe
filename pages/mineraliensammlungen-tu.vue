@@ -15,10 +15,11 @@ const page = data.value.data[0]
 const mineralStore = useMineralStore()
 const currentMineral = computed(() => mineralStore.currentMineral)
 
-const mineralsData = useState("minerals")
+// Fetch minerals from the new API route
+const { data: mineralsData } = await useFetch('/api/collection-items')
 const mstubItemsData = useState("mstubItems")
 
-const minerals = mineralsData.value.data || []
+const minerals = mineralsData.value?.data || []
 const mstubItems = mstubItemsData.value.data || []
 // const sample = mstubItems.filter((item) => item.representations && item.representations.length > 0).slice(0, 50) || []
 const samples = ref([])
