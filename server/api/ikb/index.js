@@ -127,15 +127,36 @@ export default cachedEventHandler(async (event) => {
         }
       }
 
-      // Parse searchfields if it exists and is a string
+      // Parse searchfields and restructure into search object
+      let searchfields = null;
       if (item.searchfields && typeof item.searchfields === 'string') {
         try {
-          mappedItem.searchfields = JSON.parse(item.searchfields);
+          searchfields = JSON.parse(item.searchfields);
         } catch (e) {
           console.error(`Failed to parse searchfields for item ${item.id}:`, e.message);
-          mappedItem.searchfields = null;
         }
+      } else if (item.searchfields && typeof item.searchfields === 'object') {
+        // Already parsed (shouldn't happen, but handle it)
+        searchfields = item.searchfields;
       }
+
+      // Determine title: depicted_object > depicted_locations > title (fallback)
+      let displayTitle = item.title || '';
+      if (item.depicted_object && item.depicted_object.trim()) {
+        displayTitle = item.depicted_object;
+      } else if (item.depicted_locations && item.depicted_locations.trim()) {
+        displayTitle = item.depicted_locations;
+      }
+
+      // Create search object with title, slug, and searchfields
+      mappedItem.search = {
+        title: displayTitle,
+        slug: `/items/ikb-${item.mr_ref}`,
+        searchfields: searchfields,
+      };
+
+      // Remove the old searchfields property from root
+      delete mappedItem.searchfields;
 
       return mappedItem;
     });
@@ -171,7 +192,8 @@ export default cachedEventHandler(async (event) => {
   }
 }, {
   // Cache settings
-  maxAge: 60 * 10,        // 10 minutes fresh
+  maxAge: 60 * 1,        // 1 minute fresh
   staleMaxAge: 60 * 60,   // up to 60 min as stale
   swr: true,              // Stale-While-Revalidate
 });
+
