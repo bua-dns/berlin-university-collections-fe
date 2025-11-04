@@ -7,14 +7,14 @@ const w = theme.value.data.wording[locale.value];
 const slug = route.params['mstubslug']
 
 /* Used auto-imported composables: projectConfig */
+
 const mineralsData = useState("minerals")
 const mstubItemsData = useState("mstubItems")
 
 const minerals = mineralsData.value.data || []
+const mstubItems = mstubItemsData.value.data || []
 
-// const item = mstubItems.find(item => item.slug === slug)
-const itemData = await $fetch(`/api/mstub/item/${slug}`)
-const item = itemData.item || {}
+const item = mstubItems.find(item => item.slug === slug)
 const relevantMinerals = minerals.filter(mineral => {
   return item.mineral_denominations_relations.includes(mineral.slug)
 });
@@ -108,7 +108,7 @@ function getStrunzInfo(entry) {
   </div>
 </div>
 <pre v-if="false">{{ relevantMinerals }}</pre>
-<pre v-if="true">{{ item }}</pre>
+<pre v-if="false">{{ item }}</pre>
 <template v-if="item.representations && item.representations.length > 0">
   <div class="credits">Objektfotografie: Felix Baum</div>
   <div class="object-images">

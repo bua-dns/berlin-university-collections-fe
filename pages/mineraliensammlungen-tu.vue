@@ -136,7 +136,7 @@ onMounted(() => {
           </template>
         </CardCollectionItems>
       </div>
-      <pre v-if="true">mstubData {{ mstubItemsData }}</pre>
+      <pre v-if="false">mstubData {{ mstubItemsData }}</pre>
       <pre v-if="false">samples {{ samples }}</pre>
     </section>
   </div>

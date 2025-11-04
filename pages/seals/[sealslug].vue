@@ -31,7 +31,7 @@ const seal = seals.find(item => item.slug === slug)
       <NuxtLinkLocale :tabIndex="tabIndex" @click="navState = 'close'" to="/rollsiegel-fu">
         zurück zur Übersicht</NuxtLinkLocale>
     </div>
-    <pre v-if="true">{{ oneSealData }}</pre>
+    <pre v-if="false">{{ oneSealData }}</pre>
     <div v-if="seal.main_image?.formats?.medium?.url" class="object-image">
       <a v-if="seal.link_to_3d_viewer && seal.main_image?.formats?.medium?.url" :href="seal.link_to_3d_viewer"
         target="_blank" rel="noopener" alt="zum 3D-Viewer">
