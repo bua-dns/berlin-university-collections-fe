@@ -1,3 +1,7 @@
+import { mstubItemMapping } from "~/utils/mappings/mstubItem.js"
+
+
+
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug');
 
@@ -10,12 +14,12 @@ export default defineEventHandler(async (event) => {
 
   try {
     // Fetch the specific collection item by slug using filter
-    const itemResponse = await $fetch('https://mstub-db.bua-dns.de/items/collection_items/', {
+    const itemResponse = await $fetch("https://mstub-db.bua-dns.de/items/collection_items/", {
       query: {
-        'filter[slug][_eq]': slug,
-        fields: '*.*, card_entries.card_entries_id.*',
-      }
-    });
+        "filter[slug][_eq]": slug,
+        fields: "*.*, card_entries.collection_items_id.*, representations.directus_files_id.*",
+      },
+    })
 
     const items = itemResponse.data;
     
@@ -26,7 +30,7 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    const item = items[0];
+    const item = mstubItemMapping(items[0])
 
     // Fetch minerals data
     const mineralsResponse = await $fetch('https://mstub-db.bua-dns.de/items/minerals', {

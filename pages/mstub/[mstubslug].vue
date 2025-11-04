@@ -11,7 +11,6 @@ const mineralsData = useState("minerals")
 const mstubItemsData = useState("mstubItems")
 
 const minerals = mineralsData.value.data || []
-const mstubItems = mstubItemsData.value.data || []
 
 // const item = mstubItems.find(item => item.slug === slug)
 const itemData = await $fetch(`/api/mstub/item/${slug}`)
@@ -109,7 +108,7 @@ function getStrunzInfo(entry) {
   </div>
 </div>
 <pre v-if="false">{{ relevantMinerals }}</pre>
-<pre v-if="true">{{ oneItemData }}</pre>
+<pre v-if="true">{{ item }}</pre>
 <template v-if="item.representations && item.representations.length > 0">
   <div class="credits">Objektfotografie: Felix Baum</div>
   <div class="object-images">
