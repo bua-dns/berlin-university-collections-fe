@@ -1,201 +1,177 @@
-import { ikbApiConfig } from "~/config/apis/ikb.js"
-import { getResponseHeader, setResponseHeader } from "h3"
+import { ikbApiConfig } from "~/config/apis/ikb.js";
 
-// ---- utils -------------------------------------------------------------
-
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
-
-async function fetchPage(cfg, page, pageSize = 100, attempt = 1) {
-  const { baseUrl, endpoint, token } = cfg
-  const maxAttempts = 6
-
-  // Exponential backoff + jitter
-  const jitter = Math.floor(Math.random() * 150)
-  if (attempt > 1) await sleep(300 * Math.pow(2, attempt - 1) + jitter)
-
+export default cachedEventHandler(async (event) => {
+  const startTime = Date.now();
+  
   try {
-    return await $fetch(`${baseUrl}${endpoint}`, {
+    const { baseUrl, token, endpoint } = ikbApiConfig;
+    
+    // Fetch first page to get pagination info
+    const firstPage = await $fetch(`${baseUrl}${endpoint}`, {
       query: {
-        "pagination[pageSize]": pageSize,
-        "pagination[page]": page,
-        sort: "id:asc", // keep pagination stable
+        "pagination[pageSize]": 100,
+        "pagination[page]": 1,
       },
       headers: {
         Authorization: `Bearer ${token}`,
         accept: "application/json",
       },
-      retry: 0, // we handle retries ourselves
-    })
-  } catch (err) {
-    const status = err?.response?.status || err?.statusCode
-    const retryAfterHdr = err?.response?.headers?.get?.("retry-after")
-    if ((status === 429 || (status >= 500 && status < 600)) && attempt < maxAttempts) {
-      const retryAfterMs = retryAfterHdr ? Number(retryAfterHdr) * 1000 : 0
-      if (retryAfterMs) await sleep(retryAfterMs)
-      return fetchPage(cfg, page, pageSize, attempt + 1)
-    }
-    throw err
-  }
-}
+    });
 
-async function runWithConcurrency(items, limit, fn) {
-  const results = []
-  const queue = items.slice()
-  const workers = []
+    const pagination = firstPage.meta?.pagination;
+    const totalPages = pagination?.pageCount || 1;
+    const total = pagination?.total || 0;
+    
+    console.log(`IKB API: Fetching ${total} items across ${totalPages} pages`);
 
-  const worker = async () => {
-    while (queue.length) {
-      const item = queue.shift()
-      try {
-        const res = await fn(item)
-        results.push({ ok: true, item, res })
-      } catch (e) {
-        results.push({ ok: false, item, error: e })
+    // Collect all items using Map to avoid duplicates
+    const itemsMap = new Map();
+    
+    // Add items from first page
+    (firstPage.data || []).forEach(item => {
+      itemsMap.set(item.id, item);
+    });
+
+    // If there are more pages, fetch them all concurrently
+    if (totalPages > 1) {
+      const BATCH_SIZE = 50; // Fetch in batches to avoid overwhelming the server
+      let failedPages = [];
+      
+      // Create array of page numbers to fetch (pages 2 to totalPages)
+      const pagesToFetch = Array.from({ length: totalPages - 1 }, (_, i) => i + 2);
+      
+      // Fetch in batches
+      for (let batchStart = 0; batchStart < pagesToFetch.length; batchStart += BATCH_SIZE) {
+        const batch = pagesToFetch.slice(batchStart, batchStart + BATCH_SIZE);
+        console.log(`IKB API: Fetching batch ${Math.floor(batchStart / BATCH_SIZE) + 1}/${Math.ceil(pagesToFetch.length / BATCH_SIZE)} (pages ${batch[0]}-${batch[batch.length - 1]})`);
+        
+        const batchPromises = batch.map(page =>
+          $fetch(`${baseUrl}${endpoint}`, {
+            query: {
+              "pagination[pageSize]": 100,
+              "pagination[page]": page,
+            },
+            headers: {
+              Authorization: `Bearer ${token}`,
+              accept: "application/json",
+            },
+          })
+          .then(result => ({ page, result, success: true }))
+          .catch((error) => {
+            console.error(`Failed to fetch IKB page ${page}:`, error.message);
+            return { page, result: null, success: false };
+          })
+        );
+        
+        const results = await Promise.all(batchPromises);
+        
+        // Add successful items to map
+        results.forEach(({ page, result, success }) => {
+          if (success && result?.data) {
+            result.data.forEach(item => {
+              itemsMap.set(item.id, item);
+            });
+          } else if (!success) {
+            failedPages.push(page);
+          }
+        });
       }
-    }
-  }
 
-  const n = Math.min(limit, queue.length || limit)
-  for (let i = 0; i < n; i++) workers.push(worker())
-  await Promise.all(workers)
-  return results
-}
-
-// ---- handler -----------------------------------------------------------
-
-export default cachedEventHandler(
-  async (event) => {
-    const startTime = Date.now()
-    const cfg = ikbApiConfig
-
-    try {
-      // 1) Discover totals with stable sort
-      const firstPage = await $fetch(`${cfg.baseUrl}${cfg.endpoint}`, {
-        query: {
-          "pagination[pageSize]": 100,
-          "pagination[page]": 1,
-          sort: "id:asc",
-        },
-        headers: {
-          Authorization: `Bearer ${cfg.token}`,
-          accept: "application/json",
-        },
-        retry: 0,
-      })
-
-      const pagination = firstPage.meta?.pagination
-      const totalPages = pagination?.pageCount || 1
-      const total = pagination?.total || firstPage.data?.length || 0
-
-      console.log(`IKB API: Expecting ${total} items across ${totalPages} pages`)
-
-      // 2) Collect remaining pages with bounded concurrency
-      const pages = Array.from({ length: Math.max(totalPages - 1, 0) }, (_, i) => i + 2)
-      const CONCURRENCY = 10 // tune 6–12 depending on server capacity
-      const pageSize = 100
-
-      const mapById = new Map()
-      ;(firstPage.data || []).forEach((it) => mapById.set(it.id, it))
-
-      const batchResults = await runWithConcurrency(pages, CONCURRENCY, (p) => fetchPage(cfg, p, pageSize))
-
-      const failedPages = []
-      for (const r of batchResults) {
-        if (r.ok && r.res?.data) {
-          for (const it of r.res.data) mapById.set(it.id, it)
+      // Retry failed pages sequentially (more reliable)
+      if (failedPages.length > 0) {
+        console.log(`IKB API: Retrying ${failedPages.length} failed pages sequentially...`);
+        const stillFailed = [];
+        
+        for (const page of failedPages) {
+          try {
+            const result = await $fetch(`${baseUrl}${endpoint}`, {
+              query: {
+                "pagination[pageSize]": 100,
+                "pagination[page]": page,
+              },
+              headers: {
+                Authorization: `Bearer ${token}`,
+                accept: "application/json",
+              },
+            });
+            
+            (result.data || []).forEach(item => {
+              itemsMap.set(item.id, item);
+            });
+          } catch (error) {
+            console.error(`Sequential retry failed for page ${page}:`, error.message);
+            stillFailed.push(page);
+          }
+        }
+        
+        if (stillFailed.length > 0) {
+          console.warn(`IKB API: ${stillFailed.length} pages still failed:`, stillFailed.slice(0, 20));
         } else {
-          failedPages.push(r.item)
-          console.error(`IKB page ${r.item} failed:`, r.error?.message || r.error)
+          console.log(`IKB API: All failed pages successfully retried!`);
         }
       }
-
-      // 3) Sequential fallback for stubborn pages
-      if (failedPages.length) {
-        console.warn(`IKB API: ${failedPages.length} pages failed in batch mode. Falling back to sequential fetch...`)
-        const stillFailed = []
-        for (const p of failedPages) {
-          try {
-            const res = await fetchPage(cfg, p, pageSize)
-            ;(res?.data || []).forEach((it) => mapById.set(it.id, it))
-          } catch (e) {
-            stillFailed.push(p)
-            console.error(`Sequential fetch failed for page ${p}:`, e?.message || e)
-          }
-        }
-        if (stillFailed.length) {
-          console.warn(
-            `IKB API: Final failed pages after sequential fallback: ${stillFailed
-              .slice(0, 50)
-              .join(", ")}${stillFailed.length > 50 ? " ..." : ""}`
-          )
-        }
-      }
-
-      // 4) Parse stringified JSON fields & de-dupe
-      const allItems = Array.from(mapById.values()).map((item) => {
-        const mappedItem = { ...item }
-        if (item.wikidata_references && typeof item.wikidata_references === "string") {
-          try {
-            mappedItem.wikidata_references = JSON.parse(item.wikidata_references)
-          } catch {
-            mappedItem.wikidata_references = null
-          }
-        }
-        if (item.searchfields && typeof item.searchfields === "string") {
-          try {
-            mappedItem.searchfields = JSON.parse(item.searchfields)
-          } catch {
-            mappedItem.searchfields = null
-          }
-        }
-        return mappedItem
-      })
-
-      // Keep deterministic order and avoid exceeding total (edge case)
-      allItems.sort((a, b) => (a.id > b.id ? 1 : -1))
-      const finalItems = allItems.length > total ? allItems.slice(0, total) : allItems
-
-      const endTime = Date.now()
-      const fetchDuration = endTime - startTime
-      const itemsMissing = Math.max(0, total - finalItems.length)
-
-      // Cache diagnostics (may be undefined on some setups; that's fine)
-      const cacheStatus =
-        getResponseHeader(event, "x-nitro-cache") || getResponseHeader(event, "X-Nitro-Cache") || "UNKNOWN"
-      const cacheAgeSeconds = Number(getResponseHeader(event, "age") || getResponseHeader(event, "Age") || 0)
-
-      // Server-Timing for quick inspection in DevTools
-      setResponseHeader(event, "Server-Timing", `ikb-total;desc="handler total";dur=${fetchDuration}`)
-
-      return {
-        meta: {
-          itemsFetched: finalItems.length,
-          expectedTotal: total,
-          itemsMissing,
-          totalPages,
-          fetchDurationMs: fetchDuration,
-          fetchDurationSeconds: (fetchDuration / 1000).toFixed(2),
-          fetchedAt: new Date().toISOString(),
-          concurrency: CONCURRENCY,
-          pageSize,
-          stableSort: "id:asc",
-          cacheStatus, // HIT | MISS | STALE | UNKNOWN
-          cacheAgeSeconds,
-        },
-        data: finalItems,
-      }
-    } catch (error) {
-      console.error("IKB API Error:", error)
-      throw createError({
-        statusCode: error?.statusCode || 500,
-        statusMessage: error?.message || "Failed to fetch IKB items",
-      })
     }
-  },
-  {
-    // Cache settings
-    maxAge: 60 * 10, // 10 minutes fresh
-    staleMaxAge: 60 * 60, // up to 60 min as stale
-    swr: true, // Stale-While-Revalidate
+
+    // Convert map to array and parse stringified JSON fields
+    const allItems = Array.from(itemsMap.values());
+    const mappedItems = allItems.map((item) => {
+      const mappedItem = { ...item };
+
+      // Parse wikidata_references if it exists and is a string
+      if (item.wikidata_references && typeof item.wikidata_references === 'string') {
+        try {
+          mappedItem.wikidata_references = JSON.parse(item.wikidata_references);
+        } catch (e) {
+          console.error(`Failed to parse wikidata_references for item ${item.id}:`, e.message);
+          mappedItem.wikidata_references = null;
+        }
+      }
+
+      // Parse searchfields if it exists and is a string
+      if (item.searchfields && typeof item.searchfields === 'string') {
+        try {
+          mappedItem.searchfields = JSON.parse(item.searchfields);
+        } catch (e) {
+          console.error(`Failed to parse searchfields for item ${item.id}:`, e.message);
+          mappedItem.searchfields = null;
+        }
+      }
+
+      return mappedItem;
+    });
+
+    console.log(`IKB API: Successfully fetched ${mappedItems.length} unique items`);
+
+    const endTime = Date.now();
+    const fetchDuration = endTime - startTime;
+    const itemsMissing = total - mappedItems.length;
+
+    if (itemsMissing > 0) {
+      console.warn(`IKB API: Missing ${itemsMissing} items (expected ${total}, got ${mappedItems.length})`);
+    }
+
+    return {
+      meta: {
+        itemsFetched: mappedItems.length,
+        expectedTotal: total,
+        itemsMissing: itemsMissing,
+        totalPages: totalPages,
+        fetchDurationMs: fetchDuration,
+        fetchDurationSeconds: (fetchDuration / 1000).toFixed(2),
+        fetchedAt: new Date().toISOString(),
+      },
+      data: mappedItems,
+    };
+  } catch (error) {
+    console.error("IKB API Error:", error);
+    throw createError({
+      statusCode: error?.statusCode || 500,
+      statusMessage: error?.message || "Failed to fetch IKB items",
+    });
   }
-)
+}, {
+  // Cache settings
+  maxAge: 60 * 10,        // 10 minutes fresh
+  staleMaxAge: 60 * 60,   // up to 60 min as stale
+  swr: true,              // Stale-While-Revalidate
+});
