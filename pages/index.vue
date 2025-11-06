@@ -64,6 +64,7 @@ const newscardstrans = computed(() => {
         } else {
           translation = card.translations.find((t) => t.languages_code === 'de');
           translation['featured'] = card.featured;
+          translation['image'] = card.image;
           return {
             // ...card,
             ...translation,
@@ -71,12 +72,16 @@ const newscardstrans = computed(() => {
         }
       } else {
         translation['featured'] = card.featured;
+        translation['image'] = card.image;
         return {
           // ...card,
           ...translation,
         };
       }
-    });
+    })
+    // sort by 'sort' field
+    .filter(card => card !== null)
+    .sort((a, b) => (a.sort || 0) - (b.sort || 0));
 });
 
 const carouselConfig = {
@@ -117,32 +122,14 @@ const carouselConfig = {
       </div>
     </section>
 
-    <!-- <section class="page-segment">
-      <h2 class="text-center section-heading-lg">{{ w.news }}</h2>
-      <div class="cards mt-3">
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
-          <div v-for="(card, index) in newscardstrans" :key="`card-${index}`" class="col">
-            <div v-if="card" class="card h-100" :class="{'featured': card.featured}">
-              <div class="card-body">
-                <h3 class="card-title mb-3">{{ card.title }}</h3>
-                <div v-html="card.body" class="card-text"></div>
-              </div>
-              <div class="card-footer text-center">
-                <NuxtLinkLocale :to="card.more_button_link" class="btn btn-primary">{{ card.more_button_label }}
-                </NuxtLinkLocale>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section> -->
-
     <!-- slider -->
     <section class="page-segment">
       <h2 class="text-center section-heading-lg mb-3">{{ w.news }}</h2>
       <Carousel v-bind="carouselConfig" breakpoint-mode="carousel" class="vue-carousel-news-cards">
         <Slide v-for="slide in newscardstrans" :key="slide.id">
-          <div class="carousel__item card h-100">
+          <div class="carousel__item card h-100" :class="{ 'featured': slide.featured }">
+            <img v-if="slide.image" :src="projectConfig.imageBaseUrl + '/' + slide.image" :alt="slide.title || ''"
+              class="card-img-top" />
             <div class="card-body">
               <h3 class="slide-title card-title mb-3">{{ slide.title }}</h3>
               <div class="slide-content card-text" v-html="slide.body"></div>
