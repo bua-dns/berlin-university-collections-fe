@@ -340,7 +340,6 @@ onMounted(() => {
 </script>
 
 <template>
-  
   <Head>
     <Title>{{ w.page_collections }}</Title>
   </Head>
@@ -451,7 +450,11 @@ onMounted(() => {
       </div>
     </div>
     <div class="collection_cards_wrapper card-grid">
-      <CardCollectionGrid v-for="collection in sortedData" :key="collection.id" :collection="collection"
+      <CardCollectionGrid
+        v-for="collection in sortedData"
+        :key="collection.id"
+        :collection="collection"
+        :display="collection.display"
         @set-active-collection-id="setActiveCollectionId" />
     </div>
   </div>

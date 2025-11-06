@@ -1,11 +1,11 @@
 <script setup>
-defineProps(['collection']);
+defineProps(['collection', 'display']);
 defineEmits(['setActiveCollectionId']);
 const theme = useState('theme');
 const w = theme.value.data.wording.de;
 </script>
 <template>
-  <div v-if="collection.display" @click="$emit('setActiveCollectionId', collection.id)" class="card">
+  <div v-if="display === true" @click="$emit('setActiveCollectionId', collection.id)" class="card">
     <div class="card-keeper" :style="getUniMarkerColors(collection.current_keeper, 'border-bottom-color')"
       v-if="collection.current_keeper">
       <span class="dns_uni_marker" :style="getUniMarkerColors(collection.current_keeper, 'background-color')"></span>
