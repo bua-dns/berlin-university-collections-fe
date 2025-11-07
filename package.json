@@ -16,8 +16,8 @@
     "sass": "1.91.0",
     "vue3-carousel-nuxt": "1.1.6"
   },
-  "description": "Dieses Frontend ist mit [Nuxt 3](https://nuxt.com/) erstellt.",
-  "version": "1.0.0",
+  "description": "Dieses Frontend ist mit [Nuxt 4](https://nuxt.com/) erstellt.",
+  "version": "2.0.1",
   "main": "index.js",
   "keywords": [],
   "author": "",
@@ -25,7 +25,8 @@
   "dependencies": {
     "@pinia/nuxt": "^0.5.2",
     "better-sqlite3": "^12.4.1",
-    "pinia": "^2.2.0"
+    "pinia": "^2.2.0",
+    "prismjs": "^1.30.0"
   },
   "overrides": {
     "vue": "latest"
