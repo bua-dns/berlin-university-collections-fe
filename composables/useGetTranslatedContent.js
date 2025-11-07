@@ -11,7 +11,7 @@ export function useGetTranslatedContent(key, locale, data) {
     }
 
     // Fallback to the first translation if no match found
-    const deTranslation = data.translations?.find((t) => t.languages_id === "de")
+    const deTranslation = data.translations?.find((t) => t.languages_id === "de" || t.languages_code === "de")
     if (deTranslation && deTranslation[key]) {
       return deTranslation[key]
     }
