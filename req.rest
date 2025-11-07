@@ -49,3 +49,9 @@ GET {{host}}/items/projects/25?fields=*,translations.*,logos_coop_partners.*,ima
 
 ### news cards
 GET {{host}}/items/news_cards?fields=*,translations.*&limit=-1
+
+### km_topics
+GET {{host}}/items/km_topics?fields=*,translations.*&limit=-1
+
+### km_topics - a topic by slug
+GET {{host}}/items/km_topics?fields=*,translations.*&filter[slug][_eq]=sammlungsdaten-in-tabellen-erfassen&limit=1
