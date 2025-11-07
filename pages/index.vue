@@ -135,7 +135,7 @@ const carouselConfig = {
               <div class="slide-content card-text" v-html="slide.body"></div>
             </div>
             <div class="slide-more card-footer text-center">
-              <NuxtLinkLocale :to=" slide.more_button_link" class="btn btn-primary">{{ slide.more_button_label }}
+              <NuxtLinkLocale :to="slide.more_button_link" class="btn btn-primary">{{ slide.more_button_label }}
               </NuxtLinkLocale>
             </div>
           </div>
