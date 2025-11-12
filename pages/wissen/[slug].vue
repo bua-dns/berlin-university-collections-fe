@@ -1,5 +1,5 @@
 <script setup>
-import { defineComponent, h } from "vue";
+// import TocTree from "~/components/TocTree.vue";
 
 const route = useRoute();
 const theme = useState("theme");
@@ -31,62 +31,6 @@ if (!topic.value?.data?.length) {
 
 const content = ref("");
 const toc = ref([]);
-
-const TocTree = defineComponent({
-  name: "TocTree",
-  props: {
-    nodes: {
-      type: Array,
-      required: true,
-    },
-  },
-  setup(props) {
-    const handleClick = (event, id) => {
-      event.preventDefault();
-      event.stopPropagation();
-      const target = document.getElementById(id);
-      const main = document.getElementsByTagName("main")[0];
-      if (target && main) {
-        const headerOffset = main.classList.contains("scrolled") ? 88 : 152;
-        const elementPosition = target.getBoundingClientRect().top + window.pageYOffset;
-        const offsetPosition = elementPosition - headerOffset;
-
-        window.scrollTo({ top: Math.max(offsetPosition, 0), behavior: "smooth" });
-      }
-      // if (history.replaceState) {
-      //   history.replaceState(null, "", `#${id}`);
-      // } else {
-      //   window.location.hash = id;
-      // }
-    };
-
-    const renderNodes = (nodes) =>
-      nodes.length
-        ? h(
-            "ul",
-            nodes.map((node) =>
-              h(
-                "li",
-                { key: node.id },
-                [
-                  h(
-                    "a",
-                    {
-                      href: `#${node.id}`,
-                      innerHTML: node.title,
-                      onClick: (event) => handleClick(event, node.id),
-                    },
-                  ),
-                  node.children.length ? renderNodes(node.children) : null,
-                ].filter(Boolean),
-              ),
-            ),
-          )
-        : null;
-
-    return () => renderNodes(props.nodes);
-  },
-});
 
 content.value = useMakeTitleIDs(useGetTranslatedContent('topic_text', locale, topic.value.data[0]), topic.value.data[0].toc_depth || 3);
 toc.value = useGetToc(content.value, topic.value.data[0].toc_depth || 3);
