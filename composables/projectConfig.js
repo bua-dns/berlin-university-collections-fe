@@ -68,6 +68,7 @@ export const projectConfig = {
       "status",
       "sort",
       "slug",
+      "toc_depth",
       "translations.languages_code",
       "translations.title",
       "translations.topic_text",
