@@ -1,7 +1,7 @@
 <script setup>
-const theme = useState("theme")
+// const theme = useState("theme")
 const { locale } = useI18n();
-const w = computed(() => theme.value.data.wording[locale.value]);
+// const w = computed(() => theme.value.data.wording[locale.value]);
 
 const slug = 'programm-sammlungstagung-2025';
 const { data } = await useFetchPage(slug)
