@@ -56,6 +56,10 @@ const { data: newscards } = await useFetch(`${projectConfig.dataBaseUrl}/news_ca
 const newscardstrans = computed(() => {
   return newscards.value.data
     .filter(card => card.status === 'published')
+    .sort((a, b) => (a.sort || 1000) - (b.sort || 1000))
+    .sort((a, b) => {
+      return (b.featured === true) - (a.featured === true);
+    })
     .map((card) => {
       let translation = card.translations.find((t) => t.languages_code === locale.value);
       if (!translation) {
@@ -78,10 +82,7 @@ const newscardstrans = computed(() => {
           ...translation,
         };
       }
-    })
-    // sort by 'sort' field
-    .filter(card => card !== null)
-    .sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    });
 });
 
 const carouselConfig = {
@@ -89,7 +90,7 @@ const carouselConfig = {
   itemsToShow: 1,
   gap: 10,
   // autoplay: 4000,
-  wrapAround: true,
+  wrapAround: false,
   snapAlign: 'start',
   // pauseAutoplayOnHover: false,
   // transition: 1500,
@@ -99,11 +100,11 @@ const carouselConfig = {
       snapAlign: 'start',
       // gap: 10,
     },
-    928: {
-      itemsToShow: 3,
-      snapAlign: 'start',
-      // gap: 10,
-    },
+    // 928: {
+    //   itemsToShow: 3,
+    //   snapAlign: 'start',
+    //   // gap: 10,
+    // },
   },
 };
 
@@ -129,7 +130,7 @@ const carouselConfig = {
         <Slide v-for="slide in newscardstrans" :key="slide.id">
           <div class="carousel__item card h-100" :class="{ 'featured': slide.featured }">
             <img v-if="slide.image" :src="projectConfig.imageBaseUrl + '/' + slide.image" :alt="slide.title || ''"
-              class="card-img-top" />
+              class="card-img-top img-4-to-3" />
             <div class="card-body">
               <h3 class="slide-title card-title mb-3">{{ slide.title }}</h3>
               <div class="slide-content card-text" v-html="slide.body"></div>
@@ -387,4 +388,12 @@ const carouselConfig = {
   }
 }
 
+.carousel__next--disabled,
+.carousel__prev--disabled {
+  opacity: 0.2;
+}
+.img-4-to-3 {
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
 </style>
