@@ -44,25 +44,33 @@ onMounted(() => {
   <Head>
     <Title>{{ useGetTranslatedContent('title', locale, topic.data[0]) }}</Title>
   </Head>
-  <div class="knowledge-topic" v-if="topic">
-    <div class="page-toc">
-      <h2>{{ w.toc }}</h2>
-      <div v-if="toc.length" class="toc-content">
-        <TocTree :nodes="toc" />
+  <div class="knowledge-page-container">
+    <h1 class="text-center knowledge-page-header">{{ useGetTranslatedContent('title', locale, topic.data[0]) }}</h1>
+    <div class="knowledge-topic" v-if="topic">
+      <div class="page-toc">
+        <div v-if="toc.length" class="toc-content">
+          <h2>{{ w.toc }}</h2>
+          <TocTree :nodes="toc" />
+        </div>
       </div>
-    </div>
-    <div class="page-content-container">
-      <h1 class="text-center page-header">{{ useGetTranslatedContent('title', locale, topic.data[0]) }}</h1>
-      <div class="page-content" v-html="content" />
+      <div class="page-content-container">
+        <div class="page-content" v-html="content" />
+      </div>
     </div>
   </div>
 </template>
 <style lang='scss'>
+.knowledge-page-container {
+  max-width: 118ch;
+  margin: 0 auto;
+}
+.knowledge-page-header {
+  margin: 0rem 0 2.5rem 0;
+  padding: 1rem 2rem 0;
+}
 .knowledge-topic {
-  max-width: 106rem;
   background-color: var(--color-page-content-background);
   padding: var(--page-padding);
-  margin: 0 auto;
   .page-toc {
     margin-bottom: 1.5rem;
     h2 {
@@ -71,7 +79,7 @@ onMounted(() => {
       text-align: center;
     }
     .toc-content {
-      padding: 1rem;
+      padding: 1.25rem;
       border: 1px solid var(--color-border-subtle, #d0d5dd);
       border-radius: 0.75rem;
       background: var(--color-card-background, #f7f9fb);
@@ -88,7 +96,7 @@ onMounted(() => {
       }
       ul ul {
         margin-top: 0.3rem;
-        padding-left: 1rem;
+        padding-left: 1.25rem;
         border-left: 1px solid var(--color-border-subtle, #d0d5dd);
       }
       a {
@@ -133,16 +141,16 @@ onMounted(() => {
 @media (min-width: 768px) {
   .knowledge-topic {
     display: grid;
-    grid-template-columns: 20rem 1fr;
-    column-gap: 2rem;
+    // grid-template-columns: 30ch 1fr;
+    // golden ratio
+    grid-template-columns: 1fr 1.618fr;
+    column-gap: 3ch;
     align-items: flex-start;
     .page-toc {
       position: sticky;
       top: 88px;
       height: fit-content;
       margin-bottom: 0;
-      max-width: 40rem;
-      min-width: 20rem;
     }
     .page-content-container {
       min-width: 0;
@@ -151,7 +159,8 @@ onMounted(() => {
 }
 @media (min-width: 1200px) {
   .knowledge-topic {
-    grid-template-columns: 30rem 1fr;
+    // grid-template-columns: 40ch 1fr;
+    column-gap: 4ch;
   }
 }
 
