@@ -77,6 +77,10 @@ const tabIndex = computed(() => {
             }}</NuxtLinkLocale>
         </li>
         <li>
+          <NuxtLinkLocale :tabIndex="tabIndex" @click="navState = 'close'" to="/wissen">{{ w.nav_page_wissen
+            }}</NuxtLinkLocale>
+        </li>
+        <li>
           <NuxtLinkLocale :tabIndex="tabIndex" @click="navState = 'close'" to="/images">{{ w.page_images
             }}</NuxtLinkLocale>
         </li>
