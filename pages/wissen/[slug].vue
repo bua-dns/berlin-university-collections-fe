@@ -32,7 +32,7 @@ if (!topic.value?.data?.length) {
 const content = ref("");
 const toc = ref([]);
 
-content.value = useMakeTitleIDs(useGetTranslatedContent('topic_text', locale, topic.value.data[0]), topic.value.data[0].toc_depth || 3);
+content.value = useMakeTitleIDs(useGetTranslatedContent('topic_text', locale.value, topic.value.data[0]), topic.value.data[0].toc_depth || 3);
 toc.value = useGetToc(content.value, topic.value.data[0].toc_depth || 3);
 
 onMounted(() => {
