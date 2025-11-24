@@ -1,22 +1,6 @@
 <script setup>
 const { data: items, pending, error } = await useFetch('/api/maf');
 
-const getImageUrl = (item) => {
-  if (item.online_images && item.online_images.length > 0) {
-    const img = item.online_images[0];
-    // Check for uri (from provided JSON) or url (standard Strapi)
-    const url = img.uri || img.url || img.formats?.small?.url || img.formats?.thumbnail?.url;
-    if (!url) return null;
-    if (url.startsWith('http')) return url;
-    // If it's just a filename like "Buchstabensuppe.JPG", we might need a base path.
-    // Assuming it might need the API base URL or a specific image path.
-    // For now, keeping the existing logic but adding uri support.
-    // If uri is just a filename, it might need a different handling.
-    return `https://va-003-api.berlin-university-collections.de${url.startsWith('/') ? '' : '/'}${url}`;
-  }
-  return null;
-};
-
 const getTitle = (item) => {
   return item.label || item.device || item.search?.title || 'Untitled';
 };
@@ -77,13 +61,8 @@ const getDescription = (item) => {
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div v-for="item in items.data" :key="item.id" class="border rounded p-4 shadow hover:shadow-lg transition">
         <NuxtLink :to="item.search?.slug || `/items/maf-${item.id}`">
-          <div v-if="getImageUrl(item)" class="mb-2 h-48 overflow-hidden bg-gray-100 flex items-center justify-center">
-             <!-- Assuming the URL is absolute or we have a base URL handling mechanism -->
-             <!-- If the API returns relative URLs, we might need to prepend the API base URL -->
-            <img :src="getImageUrl(item)" :alt="getTitle(item)" class="object-cover h-full w-full" />
-          </div>
-          <div v-else class="mb-2 h-48 bg-gray-200 flex items-center justify-center text-gray-500">
-            No Image
+          <div class="mb-2">
+            <MafImageDisplay :images="item.online_images" :alt="getTitle(item)" />
           </div>
           
           <h2 class="text-xl font-semibold mb-2">{{ getTitle(item) }}</h2>
