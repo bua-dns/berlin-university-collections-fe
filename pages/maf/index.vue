@@ -17,10 +17,10 @@ const getDescription = (item) => {
 </script>
 
 <template>
-  <div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">MAF Collection</h1>
+  <section class="page image-listing-page workbench">
+    <h1 class="text-center page-header">MAF Collection</h1>
     
-    <div v-if="items && items.meta" class="bg-gray-100 p-4 rounded-lg mb-6 shadow-sm border border-gray-200">
+    <div v-if="items && items.meta" class="bg-gray-100 p-4 rounded-lg mb-6 shadow-sm border border-gray-200 max-w-4xl mx-auto">
       <h2 class="text-lg font-semibold mb-3 text-gray-700 flex items-center gap-2">
         <span class="i-heroicons-chart-bar-square w-5 h-5"></span>
         Request Metadata
@@ -58,19 +58,41 @@ const getDescription = (item) => {
     <div v-if="pending">Loading...</div>
     <div v-else-if="error">Error loading items: {{ error.message }}</div>
     
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div v-for="item in items.data" :key="item.id" class="border rounded p-4 shadow hover:shadow-lg transition">
-        <NuxtLink :to="item.search?.slug || `/items/maf-${item.id}`">
-          <div class="mb-2">
+    <div v-else class="collection-items">
+      <CardCollectionItems v-for="item in items.data" :key="item.id">
+        <template #image>
+          <NuxtLink :to="item.search?.slug || `/items/maf-${item.id}`">
             <MafImageDisplay :images="item.online_images" :alt="getTitle(item)" />
+          </NuxtLink>
+        </template>
+        
+        <template #title>
+          <NuxtLink :to="item.search?.slug || `/items/maf-${item.id}`">
+            {{ getTitle(item) }}
+          </NuxtLink>
+        </template>
+
+        <template #meta>
+          <div class="field" v-if="item.manufacturer">
+            <div class="field-label">Hersteller</div>
+            <div class="field-value">{{ item.manufacturer }}</div>
           </div>
-          
-          <h2 class="text-xl font-semibold mb-2">{{ getTitle(item) }}</h2>
-          <p class="text-sm text-gray-600 truncate">{{ getDescription(item) || 'No description' }}</p>
-        </NuxtLink>
-      </div>
+          <div class="field" v-if="item.production_year_display">
+            <div class="field-label">Jahr</div>
+            <div class="field-value">{{ item.production_year_display }}</div>
+          </div>
+          <div class="field" v-if="item.country">
+            <div class="field-label">Land</div>
+            <div class="field-value">{{ item.country }}</div>
+          </div>
+          <div class="field" v-if="item.remarks">
+            <div class="field-label">Bemerkungen</div>
+            <div class="field-value">{{ item.remarks }}</div>
+          </div>
+        </template>
+      </CardCollectionItems>
     </div>
-  </div>
+  </section>
 </template>
 
 <style scoped>
