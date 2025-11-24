@@ -1,6 +1,39 @@
 <script setup>
 const { data: items, pending, error } = await useFetch('/api/maf');
 
+const searchQuery = ref('');
+
+const filteredItems = computed(() => {
+  if (!items.value?.data) return [];
+  if (!searchQuery.value || searchQuery.value.length < 3) return [];
+  
+  const query = searchQuery.value.toLowerCase();
+  
+  const results = items.value.data.filter(item => {
+    const text = [
+      item.label,
+      item.device,
+      item.manufacturer,
+      item.model,
+      item.remarks,
+      item.country,
+      item.inventory_number,
+      item.artifact_number,
+      item.search?.title
+    ].filter(Boolean).join(' ').toLowerCase();
+    
+    return text.includes(query);
+  });
+
+  return results.sort((a, b) => {
+    const hasImagesA = a.online_images && a.online_images.length > 0;
+    const hasImagesB = b.online_images && b.online_images.length > 0;
+    if (hasImagesA && !hasImagesB) return -1;
+    if (!hasImagesA && hasImagesB) return 1;
+    return 0;
+  });
+});
+
 const getTitle = (item) => {
   return item.label || item.device || item.search?.title || 'Untitled';
 };
@@ -12,46 +45,31 @@ const getDescription = (item) => {
   if (item.country) parts.push(item.country);
   return parts.join(', ') || item.remarks || '';
 };
-
-
 </script>
 
 <template>
   <section class="page image-listing-page workbench">
     <h1 class="text-center page-header">MAF Collection</h1>
-    
-    <div v-if="items && items.meta" class="bg-gray-100 p-4 rounded-lg mb-6 shadow-sm border border-gray-200 max-w-4xl mx-auto">
-      <h2 class="text-lg font-semibold mb-3 text-gray-700 flex items-center gap-2">
-        <span class="i-heroicons-chart-bar-square w-5 h-5"></span>
-        Request Metadata
-      </h2>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-        <div class="bg-white p-3 rounded border border-gray-200">
-          <span class="block text-gray-500 text-xs uppercase tracking-wider mb-1">Items Fetched</span>
-          <div class="flex items-baseline">
-            <span class="font-mono font-bold text-xl text-blue-600">{{ items.meta.itemsFetched }}</span>
-            <span class="text-gray-400 text-xs ml-2">of {{ items.meta.expectedTotal }}</span>
-          </div>
-        </div>
-        <div class="bg-white p-3 rounded border border-gray-200">
-          <span class="block text-gray-500 text-xs uppercase tracking-wider mb-1">Total Pages</span>
-          <span class="font-mono font-bold text-xl text-gray-800">{{ items.meta.totalPages }}</span>
-        </div>
-        <div class="bg-white p-3 rounded border border-gray-200">
-          <span class="block text-gray-500 text-xs uppercase tracking-wider mb-1">Duration</span>
-          <div class="flex items-baseline">
-            <span class="font-mono font-bold text-xl text-gray-800">{{ items.meta.fetchDurationSeconds }}s</span>
-            <span class="text-gray-400 text-xs ml-2">({{ items.meta.fetchDurationMs }}ms)</span>
-          </div>
-        </div>
-        <div class="bg-white p-3 rounded border border-gray-200">
-          <span class="block text-gray-500 text-xs uppercase tracking-wider mb-1">Fetched At</span>
-          <div class="font-mono text-sm font-medium text-gray-800">{{ new Date(items.meta.fetchedAt).toLocaleTimeString() }}</div>
-          <div class="text-gray-400 text-xs">{{ new Date(items.meta.fetchedAt).toLocaleDateString() }}</div>
+
+    <div class="search-controls">
+      <div class="search-input-wrapper">
+        <input 
+          v-model="searchQuery" 
+          type="text" 
+          placeholder="Suche in der Sammlung..." 
+          class="search-input"
+        />
+        <div v-if="searchQuery" 
+             @click="searchQuery = ''"
+             class="clear-button">
+          ✕
         </div>
       </div>
-      <div v-if="items.meta.itemsMissing > 0" class="mt-3 bg-red-50 text-red-700 p-2 rounded border border-red-200 text-sm flex items-center gap-2">
-        <span class="font-bold">Warning:</span> {{ items.meta.itemsMissing }} items missing from expected total.
+      <div class="search-status">
+        <span v-if="searchQuery && searchQuery.length < 3">Bitte geben Sie mindestens 3 Zeichen ein.</span>
+        <span v-else-if="searchQuery && filteredItems.length === 0">Keine Ergebnisse gefunden.</span>
+        <span v-else-if="filteredItems.length > 0">{{ filteredItems.length }} Objekte gefunden</span>
+        <span v-else>Bitte geben Sie einen Suchbegriff ein.</span>
       </div>
     </div>
 
@@ -59,10 +77,10 @@ const getDescription = (item) => {
     <div v-else-if="error">Error loading items: {{ error.message }}</div>
     
     <div v-else class="collection-items">
-      <CardCollectionItems v-for="item in items.data" :key="item.id">
+      <CardCollectionItems v-for="item in filteredItems" :key="item.id">
         <template #image>
           <NuxtLink :to="item.search?.slug || `/items/maf-${item.id}`">
-            <MafImageDisplay :images="item.online_images" :alt="getTitle(item)" />
+            <MafImageDisplay :images="item.online_images" :alt="getTitle(item)" cover hide-missing />
           </NuxtLink>
         </template>
         
@@ -95,6 +113,72 @@ const getDescription = (item) => {
   </section>
 </template>
 
-<style scoped>
-/* Add any custom styles here if Tailwind is not fully set up or if specific overrides are needed */
+<style scoped lang="scss">
+.search-controls {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.search-input-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 36rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  outline: none;
+  transition: all 0.2s;
+
+  &:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  }
+}
+
+.clear-button {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #9ca3af;
+
+  &:hover {
+    color: #4b5563;
+  }
+}
+
+.search-status {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+}
+
+.collection-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.field {
+  margin-bottom: 10px;
+}
+
+.field-label {
+  font-weight: bold;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.field-value {
+  color: #333;
+}
 </style>
