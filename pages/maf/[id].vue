@@ -43,6 +43,24 @@ const closeLightbox = (e) => {
   }
 };
 
+const formatCatalogosComment = (commentArray) => {
+  if (!commentArray || !Array.isArray(commentArray)) return '';
+  
+  return commentArray
+    .map(block => {
+      if (block.type === 'paragraph' && block.children) {
+        const text = block.children
+          .map(child => child.text || '')
+          .join('')
+          .trim();
+        return text ? `<p>${text}</p>` : '';
+      }
+      return '';
+    })
+    .filter(Boolean)
+    .join('');
+};
+
 onMounted(() => {
   window.addEventListener('keydown', closeLightbox);
 });
@@ -136,6 +154,12 @@ onUnmounted(() => {
             </div>
           </div>
         </div>
+
+        <!-- Catalogos Comment Section -->
+        <div class="catalogos-section mt-6" v-if="item.catalogos_comment && item.catalogos_comment.length > 0">
+          <h3 class="section-title">Kommentar</h3>
+          <div class="catalogos-content" v-html="formatCatalogosComment(item.catalogos_comment)"></div>
+        </div>
       </div>
     </div>
 
@@ -173,6 +197,7 @@ onUnmounted(() => {
         </div>
       </div>
     </Teleport>
+    <pre v-if="true">{{ item }}</pre>
   </div>
 </template>
 
@@ -240,6 +265,35 @@ onUnmounted(() => {
           &:hover {
             transform: scale(1.05);
           }
+        }
+      }
+    }
+  }
+
+  .catalogos-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e5e7eb;
+
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #1f2937;
+    }
+
+    .catalogos-content {
+      background: #f9fafb;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      line-height: 1.6;
+
+      p {
+        margin-bottom: 1rem;
+        color: #374151;
+
+        &:last-child {
+          margin-bottom: 0;
         }
       }
     }
