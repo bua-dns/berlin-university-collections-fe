@@ -84,7 +84,7 @@ onUnmounted(() => {
       <h1 class="page-header text-center">{{ getTitle(item) }}</h1>
 
       <div class="backlink">
-        <NuxtLink to="/maf">zurück zur Übersicht</NuxtLink>
+        <NuxtLink to="/maf-hu">zurück zur Übersicht</NuxtLink>
       </div>
 
       <div class="max-w-6xl mx-auto p-4">
@@ -200,7 +200,7 @@ onUnmounted(() => {
         </div>
       </div>
     </Teleport>
-    <pre v-if="true">{{ item }}</pre>
+    <pre v-if="false">{{ item }}</pre>
   </div>
 </template>
 

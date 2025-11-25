@@ -79,7 +79,7 @@ const getDescription = (item) => {
     <div v-else class="collection-items">
       <CardCollectionItems v-for="item in filteredItems" :key="item.id">
         <template #image>
-          <NuxtLink :to="item.search?.slug || `/maf/${item.id}`" class="image-link-wrapper">
+          <NuxtLink :to="item.search?.slug || `/maf-hu/${item.id}`" class="image-link-wrapper">
             <MafImageDisplay :images="item.online_images" :alt="getTitle(item)" cover hide-missing />
             <div v-if="item.online_images && item.online_images.length > 0" class="image-count-badge">
               <span class="image-icon">📷</span>
@@ -89,7 +89,7 @@ const getDescription = (item) => {
         </template>
         
         <template #title>
-          <NuxtLink :to="item.search?.slug || `/maf/${item.id}`">
+          <NuxtLink :to="item.search?.slug || `/maf-hu/${item.id}`">
             {{ getTitle(item) }}
           </NuxtLink>
         </template>

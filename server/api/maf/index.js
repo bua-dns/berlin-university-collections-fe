@@ -154,7 +154,7 @@ export default cachedEventHandler(async (event) => {
       // Create search object with title, slug, and searchfields
       mappedItem.search = {
         title: displayTitle,
-        slug: `/maf/${item.mr_ref || item.id}`,
+        slug: `/maf-hu/${item.mr_ref || item.id}`,
         searchfields: searchfields,
       };
 
