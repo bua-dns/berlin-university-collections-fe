@@ -79,8 +79,12 @@ const getDescription = (item) => {
     <div v-else class="collection-items">
       <CardCollectionItems v-for="item in filteredItems" :key="item.id">
         <template #image>
-          <NuxtLink :to="item.search?.slug || `/items/maf-${item.id}`">
+          <NuxtLink :to="item.search?.slug || `/items/maf-${item.id}`" class="image-link-wrapper">
             <MafImageDisplay :images="item.online_images" :alt="getTitle(item)" cover hide-missing />
+            <div v-if="item.online_images && item.online_images.length > 0" class="image-count-badge">
+              <span class="image-icon">📷</span>
+              <span class="image-number">{{ item.online_images.length }}</span>
+            </div>
           </NuxtLink>
         </template>
         
@@ -166,6 +170,35 @@ const getDescription = (item) => {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
+}
+
+.image-link-wrapper {
+  position: relative;
+  display: block;
+}
+
+.image-count-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  backdrop-filter: blur(4px);
+  
+  .image-icon {
+    font-size: 1rem;
+  }
+  
+  .image-number {
+    line-height: 1;
+  }
 }
 
 .field {
