@@ -45,7 +45,7 @@ const closeLightbox = (e) => {
 
 const formatCatalogosComment = (commentArray) => {
   if (!commentArray || !Array.isArray(commentArray)) return '';
-  
+
   return commentArray
     .map(block => {
       if (block.type === 'paragraph' && block.children) {
@@ -72,16 +72,17 @@ onUnmounted(() => {
 
 <template>
   <div class="page university-collection-item">
+
     <Head>
       <Title>{{ item ? getTitle(item) : id }}</Title>
     </Head>
 
     <div v-if="pending" class="text-center p-8">Loading...</div>
-    
+
     <div v-else-if="item" class="maf-detail">
       <h2 class="mb-4 text-center">Medienarchäologischer Fundus</h2>
       <h1 class="page-header text-center">{{ getTitle(item) }}</h1>
-      
+
       <div class="backlink">
         <NuxtLink to="/maf">zurück zur Übersicht</NuxtLink>
       </div>
@@ -95,7 +96,7 @@ onUnmounted(() => {
                 <div class="field-label font-bold text-gray-700">Hersteller</div>
                 <div class="field-value">{{ item.manufacturer }}</div>
               </div>
-              
+
               <div class="field" v-if="item.model">
                 <div class="field-label font-bold text-gray-700">Modell</div>
                 <div class="field-value">{{ item.model }}</div>
@@ -150,26 +151,18 @@ onUnmounted(() => {
         <div class="additional-images mt-4" v-if="item.online_images && item.online_images.length > 1">
           <div class="maf-gallery">
             <div v-for="(img, index) in item.online_images.slice(1)" :key="index" class="maf-gallery-item">
-              <img :src="getImageUrl(img)" :alt="`${getTitle(item)} - Image ${index + 2}`" @click="openLightbox(index + 1)" />
+              <img :src="getImageUrl(img)" :alt="`${getTitle(item)} - Image ${index + 2}`"
+                @click="openLightbox(index + 1)" />
             </div>
           </div>
         </div>
-
-        <!-- Catalogos Comment Section -->
-        <div class="catalogos-section mt-6" v-if="item.catalogos_comment && item.catalogos_comment.length > 0">
-          <h3 class="section-title">Kommentar</h3>
-          <div class="catalogos-content" v-html="formatCatalogosComment(item.catalogos_comment)"></div>
-        </div>
-
-        <!-- Catalogos Comment Section with Strapi Blocks Renderer -->
-        <ClientOnly>
-          <div class="catalogos-section mt-6" v-if="item.catalogos_comment && Array.isArray(item.catalogos_comment) && item.catalogos_comment.length > 0">
-            <h3 class="section-title">Kommentar (Strapi Blocks)</h3>
-            <div class="catalogos-content">
-              <StrapiBlocksText :nodes="item.catalogos_comment" />
-            </div>
+        <div v-if="item.catalogos_comment?.length" class="catalogos-section mt-6">
+          <!-- kommt direkt aus dem Modul, SSR-fähig -->
+          <h3 class="section-title">Kommentar aus <i>Catalogos</i></h3>
+          <div class="catalogos-content">
+            <StrapiBlocksText :nodes="item.catalogos_comment" />
           </div>
-        </ClientOnly>
+        </div>
       </div>
     </div>
 
@@ -216,14 +209,16 @@ onUnmounted(() => {
   .backlink {
     text-align: center;
     margin: 1.5rem auto;
+
     a {
       text-decoration: underline;
+
       &:hover {
         text-decoration: none;
       }
     }
   }
-  
+
   .content-layout {
     display: grid;
     grid-template-columns: 1fr;
@@ -237,7 +232,7 @@ onUnmounted(() => {
 
   .metadata-section {
     order: 2;
-    
+
     @media (min-width: 768px) {
       order: 1;
     }
@@ -245,7 +240,7 @@ onUnmounted(() => {
 
   .image-section {
     order: 1;
-    
+
     @media (min-width: 768px) {
       order: 2;
     }
@@ -258,12 +253,12 @@ onUnmounted(() => {
 
   .additional-images {
     margin-top: 2rem;
-    
+
     .maf-gallery {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(220px, 250px));
       gap: 1rem;
-      
+
       .maf-gallery-item {
         img {
           display: block;
@@ -271,7 +266,7 @@ onUnmounted(() => {
           cursor: pointer;
           transition: transform 0.2s;
           background-color: #f3f4f6;
-          
+
           &:hover {
             transform: scale(1.05);
           }
@@ -308,19 +303,19 @@ onUnmounted(() => {
       }
     }
   }
-  
+
   .field {
     background: #f9fafb;
     padding: 0.625rem 0.875rem;
     border-radius: 0.375rem;
-    
+
     .field-label {
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       margin-bottom: 0.125rem;
     }
-    
+
     .field-value {
       font-size: 1rem;
     }
