@@ -160,6 +160,16 @@ onUnmounted(() => {
           <h3 class="section-title">Kommentar</h3>
           <div class="catalogos-content" v-html="formatCatalogosComment(item.catalogos_comment)"></div>
         </div>
+
+        <!-- Catalogos Comment Section with Strapi Blocks Renderer -->
+        <ClientOnly>
+          <div class="catalogos-section mt-6" v-if="item.catalogos_comment && Array.isArray(item.catalogos_comment) && item.catalogos_comment.length > 0">
+            <h3 class="section-title">Kommentar (Strapi Blocks)</h3>
+            <div class="catalogos-content">
+              <StrapiBlocksText :nodes="item.catalogos_comment" />
+            </div>
+          </div>
+        </ClientOnly>
       </div>
     </div>
 

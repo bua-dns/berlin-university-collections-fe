@@ -25,6 +25,7 @@
   "dependencies": {
     "@pinia/nuxt": "^0.5.2",
     "better-sqlite3": "^12.4.1",
+    "nuxt-strapi-blocks-renderer": "^1.1.1",
     "pinia": "^2.2.0",
     "prismjs": "^1.30.0"
   },

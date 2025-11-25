@@ -62,7 +62,7 @@ export default defineNuxtConfig({
     '@/assets/css/styles.scss'
   ],
 
-  modules: ['@nuxt/content', '@pinia/nuxt', "@nuxtjs/i18n", "vue3-carousel-nuxt"],
+  modules: ['@nuxt/content', '@pinia/nuxt', "@nuxtjs/i18n", "vue3-carousel-nuxt", "nuxt-strapi-blocks-renderer"],
   // modules: ['@nuxt/content', '@pinia/nuxt', "@nuxtjs/i18n"],
 
   plugins: [
