@@ -310,7 +310,7 @@ function shortenKeeperInfo(keeper) {
             </div>
           </div>
           <div class="collection-listing mt-5">
-            <h3 class="mb-4">{{ w.collections_in_bua_resource }} - {{ resource.slug }}</h3>
+            <h3 class="mb-4">{{ w.collections_in_bua_resource }}</h3>
             <div v-if="relatedCollections[resource.slug]" class=" page-card-grid mt-2">
               <div v-for="(collection, index) in sortEntries(relatedCollections[resource.slug], 'collection')"
                 :key="`collection-${index}`">

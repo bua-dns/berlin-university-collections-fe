@@ -99,14 +99,12 @@ const tabIndex = computed(() => {
           <NuxtLinkLocale :tabIndex="tabIndex" @click="navState = 'close'" to="/datenschutz">{{ w.page_privacy_policy
             }}</NuxtLinkLocale>
         </li>
-      </ul>
-      <h4 class="nav-sub-title text-center">{{ w.collection_conference_2025 }}</h4>
-      <ul>
         <li>
-          <NuxtLinkLocale :tabIndex="tabIndex" @click="navState = 'close'" to="/sammlungstagung/call-for-papers">
-            Call for Papers </NuxtLinkLocale>
+          <NuxtLinkLocale :tabIndex="tabIndex" @click="navState = 'close'" to="/sammlungstagung">
+            Sammlungstagung 2025</NuxtLinkLocale>
         </li>
       </ul>
+
       <h4 class="nav-sub-title text-center">{{ w.lab }}</h4>
       <ul>
         <li>
