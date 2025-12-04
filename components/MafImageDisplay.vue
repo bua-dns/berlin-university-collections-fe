@@ -18,6 +18,10 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['validImageCount']);
+
+const imageErrors = ref(new Set());
+
 const getImageUrl = (img) => {
   const uri = img.uri || img.url;
   if (!uri) return '';
@@ -26,24 +30,40 @@ const getImageUrl = (img) => {
   }
   return `https://files.berlin-university-collections.de/maf-images/${uri}`;
 }
+
+const handleImageError = (index) => {
+  imageErrors.value.add(index);
+  updateValidCount();
+}
+
+const shouldShowImage = (index) => {
+  return !imageErrors.value.has(index);
+}
+
+const updateValidCount = () => {
+  const validCount = (props.images?.length || 0) - imageErrors.value.size;
+  emit('validImageCount', validCount);
+}
 </script>
 
 <template>
   <div class="maf-image-display" v-if="images && images.length > 0">
-    <div v-if="cover" class="cover-container">
-      <img :src="getImageUrl(images[0])" :alt="alt"
-        class="cover-image" loading="lazy" />
+    <div v-if="cover && shouldShowImage(0)" class="cover-container">
+      <img :src="getImageUrl(images[0])" 
+        :alt="alt"
+        class="cover-image" 
+        loading="lazy"
+        @error="handleImageError(0)" />
     </div>
     <div v-else class="grid-container">
-      <div v-for="(img, index) in images" :key="index" class="grid-item">
-        <img :src="getImageUrl(img)" :alt="`${alt} - ${index + 1}`"
+      <div v-for="(img, index) in images" :key="index" class="grid-item" v-show="shouldShowImage(index)">
+        <img :src="getImageUrl(img)" 
+          :alt="`${alt} - ${index + 1}`"
           class="grid-image"
-          loading="lazy" />
+          loading="lazy"
+          @error="handleImageError(index)" />
       </div>
     </div>
-  </div>
-  <div v-else-if="!hideMissing" class="placeholder">
-    No Image
   </div>
 </template>
 

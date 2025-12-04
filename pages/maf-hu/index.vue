@@ -2,6 +2,7 @@
 const { data: items, pending, error } = await useFetch('/api/maf');
 
 const searchQuery = ref('');
+const validImageCounts = ref({});
 
 const filteredItems = computed(() => {
   if (!items.value?.data) return [];
@@ -45,6 +46,14 @@ const getDescription = (item) => {
   if (item.country) parts.push(item.country);
   return parts.join(', ') || item.remarks || '';
 };
+
+const updateValidImageCount = (itemId, count) => {
+  validImageCounts.value[itemId] = count;
+};
+
+const getValidImageCount = (itemId) => {
+  return validImageCounts.value[itemId] ?? null;
+};
 </script>
 
 <template>
@@ -80,10 +89,15 @@ const getDescription = (item) => {
       <CardCollectionItems v-for="item in filteredItems" :key="item.id">
         <template #image>
           <NuxtLink :to="item.search?.slug || `/maf-hu/${item.id}`" class="image-link-wrapper">
-            <MafImageDisplay :images="item.online_images" :alt="getTitle(item)" cover hide-missing />
-            <div v-if="item.online_images && item.online_images.length > 0" class="image-count-badge">
+            <MafImageDisplay 
+              :images="item.online_images" 
+              :alt="getTitle(item)" 
+              cover 
+              hide-missing
+              @validImageCount="(count) => updateValidImageCount(item.id, count)" />
+            <div v-if="getValidImageCount(item.id) > 0" class="image-count-badge">
               <span class="image-icon">📷</span>
-              <span class="image-number">{{ item.online_images.length }}</span>
+              <span class="image-number">{{ getValidImageCount(item.id) }}</span>
             </div>
           </NuxtLink>
         </template>
