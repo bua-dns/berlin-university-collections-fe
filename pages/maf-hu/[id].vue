@@ -16,7 +16,7 @@ const item = computed(() => {
 });
 
 const getTitle = (item) => {
-  return item.label || item.device || item.search?.title || 'Untitled';
+  return item.device || item.search?.title || 'Untitled';
 };
 
 const getImageUrl = (img) => {
@@ -43,23 +43,6 @@ const closeLightbox = (e) => {
   }
 };
 
-const formatCatalogosComment = (commentArray) => {
-  if (!commentArray || !Array.isArray(commentArray)) return '';
-
-  return commentArray
-    .map(block => {
-      if (block.type === 'paragraph' && block.children) {
-        const text = block.children
-          .map(child => child.text || '')
-          .join('')
-          .trim();
-        return text ? `<p>${text}</p>` : '';
-      }
-      return '';
-    })
-    .filter(Boolean)
-    .join('');
-};
 
 onMounted(() => {
   window.addEventListener('keydown', closeLightbox);
@@ -91,6 +74,9 @@ onUnmounted(() => {
         <div class="content-layout">
           <!-- Metadata Section (Left) -->
           <div class="metadata-section">
+            <div class="field" v-if="item.artifact_number">
+              <div class="field-value">{{ item.artifact_number }}</div>
+            </div>
             <div class="metadata grid grid-cols-1 gap-3">
               <div class="field" v-if="item.manufacturer">
                 <div class="field-label font-bold text-gray-700">Hersteller</div>
@@ -102,14 +88,18 @@ onUnmounted(() => {
                 <div class="field-value">{{ item.model }}</div>
               </div>
 
-              <div class="field" v-if="item.production_year_display">
-                <div class="field-label font-bold text-gray-700">Produktionsjahr</div>
-                <div class="field-value">{{ item.production_year_display }}</div>
-              </div>
-
-              <div class="field" v-if="item.country">
-                <div class="field-label font-bold text-gray-700">Land</div>
-                <div class="field-value">{{ item.country }}</div>
+              <div class="field" v-if="item.country || item.production_year_display">
+                <div class="field-value">
+                  <template v-if="item.country && item.production_year_display">
+                    {{ item.country }}, {{ item.production_year_display }}
+                  </template>
+                  <template v-else-if="item.country">
+                    {{ item.country }}
+                  </template>
+                  <template v-else>
+                    {{ item.production_year_display }}
+                  </template>
+                </div>
               </div>
 
               <div class="field" v-if="item.inventory_number">
@@ -117,25 +107,20 @@ onUnmounted(() => {
                 <div class="field-value">{{ item.inventory_number }}</div>
               </div>
 
-              <div class="field" v-if="item.artifact_number">
-                <div class="field-label font-bold text-gray-700">Artefaktnummer</div>
-                <div class="field-value">{{ item.artifact_number }}</div>
-              </div>
-
-              <div class="field" v-if="item.current_status">
+              <!-- <div class="field" v-if="item.current_status">
                 <div class="field-label font-bold text-gray-700">Status</div>
                 <div class="field-value">{{ item.current_status }}</div>
-              </div>
+              </div> -->
 
               <div class="field" v-if="item.existence_documented">
                 <div class="field-label font-bold text-gray-700">Standort</div>
                 <div class="field-value">{{ item.existence_documented }}</div>
               </div>
 
-              <div class="field" v-if="item.remarks">
+              <!-- <div class="field" v-if="item.remarks">
                 <div class="field-label font-bold text-gray-700">Bemerkungen</div>
                 <div class="field-value">{{ item.remarks }}</div>
-              </div>
+              </div> -->
             </div>
           </div>
 
@@ -156,13 +141,12 @@ onUnmounted(() => {
             </div>
           </div>
         </div>
-        <div v-if="item.catalogos_comment?.length" class="catalogos-section mt-6">
-          <!-- kommt direkt aus dem Modul, SSR-fähig -->
+        <!-- <div v-if="item.catalogos_comment?.length" class="catalogos-section mt-6">
           <h3 class="section-title">Kommentar aus <i>Catalogos</i></h3>
           <div class="catalogos-content">
             <StrapiBlocksText :nodes="item.catalogos_comment" />
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
 
