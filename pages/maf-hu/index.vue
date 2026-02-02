@@ -1,4 +1,15 @@
 <script setup>
+const router = useRouter();
+const theme = useState("theme")
+const { locale } = useI18n()
+const w = computed(() => theme.value.data.wording[locale.value])
+// DEV: replace by slug from path
+const slug = "maf-hu-page";
+// const titleWording = 'page_projekte'
+
+const { data } = await useFetchPage(slug)
+const page = data.value.data[0] || {}
+
 const { data: items, pending, error } = await useFetch('/api/maf');
 
 const searchQuery = ref('');
@@ -58,7 +69,10 @@ const getValidImageCount = (itemId) => {
 
 <template>
   <section class="page image-listing-page workbench">
-    <h1 class="text-center page-header">MAF Collection</h1>
+    <section class="page image-listing-page workbench">
+      <h1 class="text-center page-header">{{ useGetTranslatedContent("title", locale, page) }}</h1>
+      <div class="page-content" v-html="useGetTranslatedContent('page_content', locale, page)" />
+    </section>
 
     <div class="search-controls">
       <div class="search-input-wrapper">
@@ -81,7 +95,9 @@ const getValidImageCount = (itemId) => {
         <span v-else>Bitte geben Sie einen Suchbegriff ein.</span>
       </div>
     </div>
-
+    <div class="categories">
+      <MafCategories />
+    </div>
     <div v-if="pending">Loading...</div>
     <div v-else-if="error">Error loading items: {{ error.message }}</div>
     
@@ -128,6 +144,7 @@ const getValidImageCount = (itemId) => {
         </template>
       </CardCollectionItems>
     </div>
+    <pre v-if="false">{{page}}</pre>
   </section>
 </template>
 

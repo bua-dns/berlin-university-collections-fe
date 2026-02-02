@@ -12,6 +12,7 @@ export default cachedEventHandler(async (event) => {
         "pagination[pageSize]": 100,
         "pagination[page]": 1,
         "populate[0]": "online_images",
+        "populate[1]": "categories"
       },
       headers: {
         Authorization: `Bearer ${token}`,
@@ -46,24 +47,25 @@ export default cachedEventHandler(async (event) => {
         const batch = pagesToFetch.slice(batchStart, batchStart + BATCH_SIZE);
         console.log(`MAF API: Fetching batch ${Math.floor(batchStart / BATCH_SIZE) + 1}/${Math.ceil(pagesToFetch.length / BATCH_SIZE)} (pages ${batch[0]}-${batch[batch.length - 1]})`);
         
-        const batchPromises = batch.map(page =>
+        const batchPromises = batch.map((page) =>
           $fetch(`${baseUrl}${endpoint}`, {
             query: {
               "pagination[pageSize]": 100,
               "pagination[page]": page,
               "populate[0]": "online_images",
+              "populate[1]": "categories",
             },
             headers: {
               Authorization: `Bearer ${token}`,
               accept: "application/json",
             },
           })
-          .then(result => ({ page, result, success: true }))
-          .catch((error) => {
-            console.error(`Failed to fetch MAF page ${page}:`, error.message);
-            return { page, result: null, success: false };
-          })
-        );
+            .then((result) => ({ page, result, success: true }))
+            .catch((error) => {
+              console.error(`Failed to fetch MAF page ${page}:`, error.message)
+              return { page, result: null, success: false }
+            }),
+        )
         
         const results = await Promise.all(batchPromises);
         
@@ -91,6 +93,7 @@ export default cachedEventHandler(async (event) => {
                 "pagination[pageSize]": 100,
                 "pagination[page]": page,
                 "populate[0]": "online_images",
+                "populate[1]": "categories",
               },
               headers: {
                 Authorization: `Bearer ${token}`,
