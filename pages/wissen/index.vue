@@ -16,6 +16,15 @@ const { data: topics } = await useFetch(`${projectConfig.dataBaseUrl}/km_topics`
     meta: 'total_count',
   },
 });
+
+const topicsPublished = computed(() => {
+  if (!topics.value?.data?.length) return []
+
+  return topics.value.data.filter(
+    t => t.status === 'published'
+  )
+})
+
 </script>
 
 <template>
@@ -38,10 +47,12 @@ const { data: topics } = await useFetch(`${projectConfig.dataBaseUrl}/km_topics`
         </div>
       </template>
     </div>
-    <div class="topics" v-if="topics.data.length">
+
+    <div class="topics"
+     v-if="topics.data.length">
       <h2 class="text-center my-4">{{ w.page_wissen_topics }}</h2>
       <div class="topics-list">
-        <div class="topic" v-for="topic in topics.data" :key="topic.id">
+        <div class="topic" v-for="topic in topicsPublished" :key="topic.id">
           <h3 class="mb-2">{{ useGetTranslatedContent('title', locale, topic) }}</h3>
           <div class="teaser" v-html="useGetTranslatedContent('teaser', locale, topic)"></div>
           <div class="btn-container text-center">
