@@ -70,6 +70,9 @@ const handleScroll = () => {
           <NuxtLinkLocale to="/online-ressourcen">{{ w.nav_page_online_ressourcen }}</NuxtLinkLocale>
         </li>
         <li>
+          <NuxtLinkLocale to="/services">{{ w.nav_page_services}}</NuxtLinkLocale>
+        </li>
+        <li>
           <NuxtLinkLocale to="/projekte">{{ w.nav_page_projekte}}</NuxtLinkLocale>
         </li>
         <li>
