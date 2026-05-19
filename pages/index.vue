@@ -108,6 +108,39 @@ const carouselConfig = {
   },
 };
 
+const INTERNAL_ABSOLUTE_HOST = 'berlin-university-collections.de';
+
+const isSameTabNewsLink = (link) => {
+  if (typeof link !== 'string') {
+    return true;
+  }
+
+  const trimmedLink = link.trim();
+
+  if (!trimmedLink) {
+    return true;
+  }
+
+  if (trimmedLink.startsWith('/') || trimmedLink.startsWith('#')) {
+    return true;
+  }
+
+  try {
+    const parsedUrl = new URL(trimmedLink);
+    return parsedUrl.protocol === 'https:' && parsedUrl.hostname === INTERNAL_ABSOLUTE_HOST;
+  } catch {
+    return true;
+  }
+};
+
+const getNewsLinkTarget = (link) => {
+  return isSameTabNewsLink(link) ? undefined : '_blank';
+};
+
+const getNewsLinkRel = (link) => {
+  return isSameTabNewsLink(link) ? undefined : 'noopener noreferrer';
+};
+
 </script>
 <template>
 
@@ -136,7 +169,8 @@ const carouselConfig = {
               <div class="slide-content card-text" v-html="slide.body"></div>
             </div>
             <div class="slide-more card-footer text-center">
-              <NuxtLinkLocale :to="slide.more_button_link" class="btn btn-primary">{{ slide.more_button_label }}
+              <NuxtLinkLocale :to="slide.more_button_link" :target="getNewsLinkTarget(slide.more_button_link)"
+                :rel="getNewsLinkRel(slide.more_button_link)" class="btn btn-primary">{{ slide.more_button_label }}
               </NuxtLinkLocale>
             </div>
           </div>
