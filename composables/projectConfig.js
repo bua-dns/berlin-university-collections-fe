@@ -42,6 +42,11 @@ export const projectConfig = {
       "cooperation_partners.institutions_id.name_short",
       "cooperation_partners.institutions_id.logo",
     ],
+    services: [
+      "*",
+      "translations.*",
+      "preview_image.*.*",
+    ],
     events: ["*.*"],
     colonialContexts: [
       // '*.*',

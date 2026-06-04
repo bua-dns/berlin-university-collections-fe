@@ -19,9 +19,6 @@ const images = project.images.map((image) => {
     <Head>
       <Title>{{ w.page_projekte }}</Title>
     </Head>
-    <div class="output">
-      <pre v-if="false">{{ project }}</pre>
-    </div>
     <h1 class="page-header-with-subtitle text-center">{{ useGetTranslatedContent('title', locale, project) }}</h1>
     <h2 class="page-header-subtitle text-center">{{ useGetTranslatedContent('sub_line', locale, project) }}</h2>
     <div class="projects-content-container">

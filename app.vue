@@ -30,6 +30,12 @@ const { data: projectsData } = await useFetch(`${projectConfig.dataBaseUrl}/proj
     limit: -1,
   }
 });
+const { data: servicesData } = await useFetch(`${projectConfig.dataBaseUrl}/services`, {
+  query: {
+    fields: projectConfig.fields.services.join(','),
+    limit: -1,
+  }
+});
 const { data: eventsData } = await useFetch(`${projectConfig.dataBaseUrl}/events`, {
   query: {
     fields: projectConfig.fields.projects.join(','),
@@ -95,6 +101,7 @@ useState('institutions', () => institutionsContent);
 useState('taxonomyTerms', () => taxonomyTermsData);
 useState('background_images', () => backgroundImages);
 useState('projects', () => projectsData);
+useState('services', () => servicesData);
 useState('events', () => eventsData);
 // useState('resources', () => resourcesData);
 useState('ikbCategories', () => ikbCategoriesData);
