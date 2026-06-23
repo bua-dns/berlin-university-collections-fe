@@ -3,7 +3,6 @@ const theme = useState("theme")
 const { locale } = useI18n();
 const w = computed(() => theme.value.data.wording[locale.value]);
 
-
 // config for specific page
 
 // DEV: replace by slug from path

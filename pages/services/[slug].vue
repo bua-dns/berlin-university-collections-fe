@@ -8,18 +8,33 @@ const serviceSlug = route.params.slug;
 const services = useState('services');
 const service = services.value.data.find((service) => service.slug === serviceSlug);
 
+const projectsData = useState('projects');
+const projects = projectsData.value.data
+const relatedProjects = computed(() => {
+  // return "test"
+  const poolOfProjects = [];
+  const serviceId = service.id.toString();
+  for (let project of projects) {
+    if (!project.related_services || project.related_services.length === 0) continue;
+      console.log("project.related_services: ", JSON.stringify(project.related_services));
+    const relatedServiceIds = project.related_services.map((s) => s.services_id.toString());
+    if (relatedServiceIds.includes(serviceId)) {
+      poolOfProjects.push(project);
+    }
+   } 
+  return poolOfProjects;
+});
+
 
 </script>
+
 <template>
   <div class="page services" :class="{ 'with-sidebar': service.display_sidebar === '1' }">
 
     <Head>
       <Title>{{ w.page_services }}</Title>
     </Head>
-    <div class="output">
-      <pre v-if="false">{{ service }}</pre>
-    </div>
-    <h1 class="page-header-with-subtitle text-center">{{ useGetTranslatedContent('title', locale, service) }}</h1>
+    <h1 class="page-header text-center">{{ useGetTranslatedContent('title', locale, service) }}</h1>
     <div class="services-content-container">
       <div class="main-content">
         <div class="description" v-html="useGetTranslatedContent('description', locale, service)"></div>
@@ -33,6 +48,18 @@ const service = services.value.data.find((service) => service.slug === serviceSl
         
       </div>
     </div>
+    <section v-if="relatedProjects.length > 0" class="related-projects">
+      <h2 class="text-center mb-4 mt-5 py-3">{{ w.projects_for_this_service}}</h2>
+      <div v-if="true" class="projects-listing page-card-grid mx-5">
+        <div class="project-display" v-for="(project, idx) in relatedProjects" :key="`page-card-${idx}`">
+          <Card :cardImage="project.preview_image?.filename_disk"
+            :cardTitle="useGetTranslatedContent('title', locale, project)"
+            :cardText="useGetTranslatedContent('sub_line', locale, project)"
+            :cardMoreButtonLabel="w.more_about_this_project" :cardMoreButtonLink="`/projects/${project.slug}`"
+            :cardBodyMinHeight="'13rem'" />
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 <style lang="scss">
@@ -79,7 +106,11 @@ const service = services.value.data.find((service) => service.slug === serviceSl
         grid-template-columns: 1fr;
       }
     }
-
+    .page-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--feature-card-width), 1fr));
+    gap: 1.5rem;
+  }
     .main-content {}
 
     .sidebar {

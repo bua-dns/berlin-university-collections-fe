@@ -41,6 +41,7 @@ export const projectConfig = {
       "preview_image.*.*",
       "cooperation_partners.institutions_id.name_short",
       "cooperation_partners.institutions_id.logo",
+      "related_services.*"
     ],
     services: [
       "*",
